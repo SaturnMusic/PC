@@ -1,0 +1,57 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "watch": "vue-cli-service build --watch"
+  },
+  "dependencies": {
+    "@mdi/font": "^5.9.55",
+    "axios": "^0.21.1",
+    "roboto-fontface": "*",
+    "socket.io-client": "^4.1.2",
+    "vue": "^2.6.12",
+    "vue-esc": "^3.0.1",
+    "vue-i18n": "^8.22.4",
+    "vue-router": "^3.4.9",
+    "vuedraggable": "^2.24.3",
+    "vuetify": "^2.5.1"
+  },
+  "devDependencies": {
+    "@intlify/vue-i18n-loader": "^1.0.0",
+    "@vue/cli-plugin-eslint": "^4.5.10",
+    "@vue/cli-plugin-router": "^4.5.10",
+    "@vue/cli-service": "^4.5.10",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "sass": "^1.32.5",
+    "sass-loader": "^8.0.0",
+    "vue-cli-plugin-i18n": "~1.0.1",
+    "vue-cli-plugin-vuetify": "^2.0.9",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify-loader": "^1.7.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

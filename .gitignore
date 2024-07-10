@@ -1,0 +1,11 @@
+dist/
+node_modules/
+app/node_modules/
+app/dist/
+#app/client/dist/
+app/client/node_modules/
+electron_dist/
+translations.zip
+package-lock.json
+app/package-lock.json
+app/client/package-lock.json

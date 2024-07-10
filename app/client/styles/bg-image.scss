@@ -1,0 +1,59 @@
+.theme--dark.v-tabs > .v-tabs-bar {
+    background-color: #00000000 !important;
+    backdrop-filter: blur(16px); 
+}
+.theme--dark.v-list  {
+    background-color: #00000000 !important;
+}
+.theme--light.v-list {
+    background-color: #ffffff00 !important;
+}
+.theme--dark.v-application {
+    background-color: #000000aa !important;
+}
+.theme--light.v-application {
+    background-color: #ffffff00 !important;
+}
+.v-list-item {
+    background-color: #00000000;
+}
+.v-list {
+    background-color: #000000aa !important;
+}
+.v-item-group {
+    background-color: #00000000 !important;
+    backdrop-filter: blur(16px);
+}
+.v-card {
+    background-color: #00000000 !important;
+    backdrop-filter: blur(16px);
+}
+.v-navigation-drawer {
+    background-color: #00000000 !important;
+}
+.theme--dark.v-navigation-drawer--is-mouseover {
+    background-color: #12121277 !important;
+    backdrop-filter: blur(16px);
+}
+.theme--light.v-navigation-drawer--is-mouseover {
+    background-color: #ffffff66 !important;
+    backdrop-filter: blur(16px);
+}
+.v-toolbar {
+    background-color: #00000000 !important;
+}
+.v-navigation-drawer--mini-variant {
+    background-color: #00000000 !important;
+}
+.v-footer {
+    background-color: #00000000 !important;
+}
+.theme--dark.v-select-list div {
+    background-color: #212121;
+}
+.theme--light.v-select-list div {
+    background-color: #ffffff;
+}
+.v-menu__content {
+    backdrop-filter: blur(16px);
+}

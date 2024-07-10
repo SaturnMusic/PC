@@ -1,0 +1,99 @@
+{
+  "name": "saturn",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Saturn PC",
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run dist"
+  },
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://saturnclient.dev",
+  "devDependencies": {
+    "electron": "^13.6.9",
+    "electron-builder": "^22.14.13"
+  },
+  "build": {
+    "appId": "dev.arachnid.saturn",
+    "productName": "Saturn",
+    "extraResources": [
+      {
+        "from": "app/assets/**",
+        "to": "assets/"
+      }
+    ],
+    "files": [
+      "**/*",
+      "!app/client/",
+      "app/client/dist/**"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "icon": "build/icon.ico",
+      "asarUnpack": [
+        "app/node_modules/nodeezcryptor/**"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": false
+    },
+    "linux": {
+      "appId": "s.s.saturn",
+      "category": "AudioVideo;Network;Audio;FileTransfer;Player",
+      "description": "Electron-based Deezer client",
+      "desktop": {
+        "Version": "1.1",
+        "Type": "Application",
+        "Name": "Saturn",
+        "GenericName": "Electron-based Deezer client",
+        "Comment": "Desktop application for the Deezer audio streaming service",
+        "Icon": "saturn",
+        "Categories": "AudioVideo;Network;Audio;FileTransfer;Player;",
+        "MimeType": "application/http;",
+        "Keywords": "audio;download;flac;lyrics;mp3;music;spotify;stream;",
+        "StartupNotify": "true",
+        "StartupWMClass": "saturn",
+        "DBusActivatable": "false",
+        "Terminal": "false",
+        "NoDisplay": "false",
+        "Hidden": "false"
+      },
+      "executableName": "saturn",
+      "icon": "build/iconset",
+      "maintainer": "github.com/SaturnMusic",
+      "mimeTypes": [
+        "application/http"
+      ],
+      "synopsis": "Electron-based Deezer client",
+      "target": [
+        "AppImage",
+        "deb",
+        "tar.xz"
+      ]
+    },
+    "appImage": {
+      "desktop": {
+        "X-AppImage-Name": "Saturn"
+      }
+    },
+    "deb": {
+      "packageCategory": "sound",
+      "priority": "optional",
+      "depends": [
+        "libflac8",
+        "libnotify4",
+        "libnss3",
+        "libssl1.1 | libssl1.0.0",
+        "libxtst6"
+      ]
+    }
+  }
+}

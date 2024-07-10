@@ -1,0 +1,33 @@
+{
+  "name": "saturn",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "background.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arg": "^5.0.0",
+    "axios": "^0.21.1",
+    "browser-id3-writer": "^4.4.0",
+    "chalk": "^4.1.1",
+    "cheerio": "^1.0.0-rc.9",
+    "compare-versions": "^3.6.0",
+    "cors": "^2.8.5",
+    "discord-rpc": "^3.2.0",
+    "express": "^4.17.1",
+    "lastfmapi": "^0.1.1",
+    "metaflac-js2": "^1.0.7",
+    "nedb": "^1.8.0",
+    "nodeezcryptor": "git+https://github.com/SaturnMusic/encryption.git",
+    "sanitize-filename": "^1.6.3",
+    "socket.io": "^4.1.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.27.0"
+  }
+}
