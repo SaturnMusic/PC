@@ -137,6 +137,11 @@ class DeezerImage {
         this.thumb = DeezerImage.url(this.hash, this.type, 256);
     }
     static url(hash, type, size = 256) {
+        if (type == "channel") { // a bit of a silly fix but i guess it works
+            let a = (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
+            // console.log(`https://singlecolorimage.com/get/${a}/500x150.png`)
+            return `https://singlecolorimage.com/get/${a}/500x150.png`;
+        }
         if (!hash)
             return `https://e-cdns-images.dzcdn.net/images/${type}/${size}x${size}-000000-80-0-0.jpg`;
         return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.jpg`;
@@ -189,13 +194,13 @@ class DeezerLibrary {
     }
 }
 
-class SmartTrackList {
+class SmartTrackList { // !
     constructor(json) {
         this.title = json.TITLE;
         this.subtitle = json.SUBTITLE;
         this.description = json.DESCRIPTION;
         this.id = json.SMARTTRACKLIST_ID
-        this.cover = new DeezerImage(json.COVER.MD5, json.COVER.TYPE);
+        this.cover = new DeezerImage(json.PICTURES[0].MD5, json.PICTURES[0].TYPE);
     }
 }
 
@@ -209,7 +214,7 @@ class DeezerPage {
 class DeezerChannel {
     constructor(json, target) {
         this.title = json.title;
-        this.image = new DeezerImage(json.pictures.md5, json.pictures.type);
+        this.image = new DeezerImage(json.pictures.md5, "channel"); // !
         this.color = json.background_color;
         this.id = json.id;
         this.slug = json.slug; //Hopefully it's used for path
@@ -242,6 +247,7 @@ class ChannelSectionItem {
         switch (this.type) {
             case 'flow':
             case 'smarttracklist':
+                console.log("smarttl: ", json.data) // Discover
                 this.data = new SmartTrackList(json.data);
                 break;
             case 'playlist':
@@ -251,7 +257,7 @@ class ChannelSectionItem {
                 this.data = new Artist(json.data);
                 break;
             case 'channel':
-                // console.log("a", json.data)
+                // console.log("channel: ", json.data) // Go beyond streaming:
                 this.data = new DeezerChannel(json.data, json.target);
                 break;
             case 'album':
