@@ -55,7 +55,7 @@
         </v-list-item>
         <v-list-item>
             <v-list-item-content>
-                <v-list-item-title class='font-weight-bold'>exttex, Xander, Francesco, Tobs</v-list-item-title>
+                <v-list-item-title class='font-weight-bold'>exttex, Xandar Null, Francesco, Tobs</v-list-item-title>
                 <v-list-item-subtitle>Original Freezer App</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
