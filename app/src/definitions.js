@@ -137,14 +137,27 @@ class DeezerImage {
         this.thumb = DeezerImage.url(this.hash, this.type, 256);
     }
     static url(hash, type, size = 256) {
-        if (type == "channel") { // a bit of a silly fix but i guess it works
-            let a = (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
-            // console.log(`https://singlecolorimage.com/get/${a}/500x150.png`)
-            return `https://singlecolorimage.com/get/${a}/500x150.png`;
-        }
         if (!hash)
             return `https://e-cdns-images.dzcdn.net/images/${type}/${size}x${size}-000000-80-0-0.jpg`;
         return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.jpg`;
+    }
+}
+
+class DeezerChannelImage {
+    constructor(type='channel', background_color) {
+        this.color = background_color;
+        this.type = type;
+
+        this.full = DeezerChannelImage.url(background_color);
+        this.thumb = DeezerChannelImage.url(background_color);
+    }
+    static url(background_color) {
+        if (background_color) {
+            // console.log(`https://singlecolorimage.com/get/${a}/500x150.png`)
+            return `https://singlecolorimage.com/get/${background_color.replace("#", "")}/500x150.png`;
+        } else { 
+            
+        }
     }
 }
 
@@ -200,7 +213,7 @@ class SmartTrackList { // !
         this.subtitle = json.SUBTITLE;
         this.description = json.DESCRIPTION;
         this.id = json.SMARTTRACKLIST_ID
-        this.cover = new DeezerImage(json.PICTURES[0].MD5, json.PICTURES[0].TYPE);
+        this.cover = new DeezerImage(json.COVER.MD5, json.COVER.TYPE);
     }
 }
 
@@ -214,7 +227,7 @@ class DeezerPage {
 class DeezerChannel {
     constructor(json, target) {
         this.title = json.title;
-        this.image = new DeezerImage(json.pictures.md5, "channel"); // !
+        this.image = new DeezerChannelImage("channel", json.background_color); // !
         this.color = json.background_color;
         this.id = json.id;
         this.slug = json.slug; //Hopefully it's used for path
@@ -247,7 +260,7 @@ class ChannelSectionItem {
         switch (this.type) {
             case 'flow':
             case 'smarttracklist':
-                console.log("smarttl: ", json.data) // Discover
+                // console.log("smarttl: ", json.data) // Discover
                 this.data = new SmartTrackList(json.data);
                 break;
             case 'playlist':

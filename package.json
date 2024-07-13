@@ -1,7 +1,7 @@
 {
   "name": "saturn",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Saturn PC",
   "scripts": {
     "pack": "electron-builder --dir",
