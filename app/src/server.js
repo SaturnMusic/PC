@@ -474,8 +474,8 @@ app.post('/log', async (req, res) => {
     integrations.scrobbleLastFM(req.body.title, req.body.album.title, req.body.artists[0].name);
 
     //Deezer
-    if (settings.logListen)
-        await deezer.callApi('log.listen', {
+    if (settings.logListen) {
+        let a = await deezer.callApi('log.listen', {
             params: {
                 timestamp: Math.floor(new Date() / 1000),
                 ts_listen: Math.floor(new Date() / 1000),
@@ -484,6 +484,8 @@ app.post('/log', async (req, res) => {
                 media: {id: req.body.id, type: 'song', format: 'MP3_128'}
             }
         });
+        logger.warn("log.listen: ", a)
+    }
     res.status(200).end();
 });
 

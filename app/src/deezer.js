@@ -8,6 +8,8 @@ const {Track} = require('./definitions');
 const logger = require('./winston');
 
 global.lasturl;
+global.resetTimer; // undefined on first cast which is fine tbh
+global.token;
 
 class DeezerAPI {
 
@@ -59,6 +61,8 @@ class DeezerAPI {
 
         //Save SID cookie to not get token error
         if (method == 'deezer.getUserData') {
+            global.token = data.data.results.USER.OPTIONS.license_token;
+            global.resetTimer = Math.floor(new Date().getTime() / 1000);
             let sidCookie = data.headers['set-cookie'].filter((e) => e.startsWith('sid='));
             if (sidCookie.length > 0) {
                 sidCookie = sidCookie[0].split(';')[0];
@@ -97,6 +101,8 @@ class DeezerAPI {
 
                 //Save SID cookie
                 if (method == 'deezer.getUserData') {
+                    global.token = results.USER.OPTIONS.license_token;
+                    global.resetTimer = Math.floor(new Date().getTime() / 1000);
                     let sidCookie = res.headers['set-cookie'].filter((e) => e.startsWith('sid='));
                     if (sidCookie.length > 0) {
                         sidCookie = sidCookie[0].split(';')[0];
@@ -235,13 +241,26 @@ class DeezerAPI {
     // both tokens are refreshed on call so i might change that later on to speed the process up
     async generateUrl(trackId, md5origin, mediaVersion, quality = 3) {
 
+        // yucky gross token age check
+
+        var l;
+
+        if (!((Math.floor(new Date().getTime() / 1000) - global.resetTimer) >= 3600)) {   // unix ts
+            l = global.token;                                                             // deezer api provides the token expiry but like why use it lol
+        } else {
+            var userdata = await this.callApi('deezer.getUserData');
+            var l = userdata.results.USER.OPTIONS.license_token
+        }
+
+        // TODO:
+        // I am actually not entirely sure how to account for track token expiry
+        // so I guess I'll look into it a bit more later on
+
         if (quality != 1) {
 
             var trackData = await this.callApi('song.getData', {sng_id: trackId});
-            var userdata = await this.callApi('deezer.getUserData');
 
             var t = trackData.results.TRACK_TOKEN
-            var l = userdata.results.USER.OPTIONS.license_token
 
         try {
             if (t.toString() != null && l.toString() != null) {
