@@ -101,7 +101,6 @@ class DeezerAPI {
 
                 //Save SID cookie
                 if (method == 'deezer.getUserData') {
-                    global.token = results.USER.OPTIONS.license_token;
                     global.resetTimer = Math.floor(new Date().getTime() / 1000);
                     let sidCookie = res.headers['set-cookie'].filter((e) => e.startsWith('sid='));
                     if (sidCookie.length > 0) {
@@ -137,6 +136,10 @@ class DeezerAPI {
         if (data.error && data.error.VALID_TOKEN_REQUIRED) {
             await this.authorize();
             return await this.callApi(method, args, gatewayInput);
+        }
+
+        if (method == 'deezer.getUserData') {
+            global.token = data.results.USER.OPTIONS.license_token;
         }
 
         return data;
