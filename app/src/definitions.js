@@ -134,9 +134,9 @@ class DeezerImage {
         this.type = type;
         //Create full and thumb, to standardize size and because functions aren't preserved
         this.full = DeezerImage.url(this.hash, this.type, 1400);
-        this.thumb = DeezerImage.url(this.hash, this.type, 256);
+        this.thumb = DeezerImage.url(this.hash, this.type, 264);
     }
-    static url(hash, type, size = 256) {
+    static url(hash, type, size = 264) {
         if (!hash)
             return `https://e-cdns-images.dzcdn.net/images/${type}/${size}x${size}-000000-80-0-0.jpg`;
         return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.jpg`;

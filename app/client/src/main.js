@@ -358,7 +358,7 @@ new Vue({
             navigator.mediaSession.setActionHandler('previoustrack', () => this.skip(-1));
         },
         //Get Deezer CDN image url
-        getImageUrl(img, size = 256) {
+        getImageUrl(img, size = 264) {
             return `https://e-cdns-images.dzcdn.net/images/${img.type}/${img.hash}/${size}x${size}-000000-80-0-0.jpg`
         },
 

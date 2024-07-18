@@ -6,14 +6,16 @@
   "scripts": {
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
+    "cross-dist": "electron-builder -wl",
     "postinstall": "electron-builder install-app-deps",
-    "build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run dist"
+    "build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run dist",
+    "cross-build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run cross-dist"
   },
   "license": "GPL-3.0-or-later",
   "homepage": "https://saturnclient.dev",
   "devDependencies": {
-    "electron": "^13.6.9",
-    "electron-builder": "^22.14.13"
+    "electron": "^19.1.9",
+    "electron-builder": "^24.12.0"
   },
   "build": {
     "appId": "dev.arachnid.saturn",

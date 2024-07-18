@@ -142,9 +142,9 @@
 
                 <v-tabs-items v-model='tab'>
                     <!-- Queue tab -->
-                    <v-tab-item key='queue' v-if='showQueue'>
+                    <v-tab-item key='queue'>
                         <v-list two-line avatar class='overflow-y-auto' style='max-height: calc(100vh - 160px)'>
-                            <v-virtual-scroll :items='$root.queue.data' item-height='72' benched='5' style='overflow-y: hidden !important'>
+                            <v-virtual-scroll :key='showQueue' :items='$root.queue.data' item-height='72' benched='5' style='overflow-y: hidden !important'>
                                 <template v-slot:default="{ index, item }">
                                     <draggable v-model='$root.queue.data' @move='queueMove'>
                                         <v-lazy min-height="1" transition="fade-transition" :key='"qq" + index'>
@@ -376,7 +376,17 @@ export default {
         //Force update queue
         '$root.shuffled'() {
             this.showQueue = false;
-            this.showQueue = true;
+            this.$root.playIndex(0);
+            this.$nextTick(() => {
+                this.showQueue = true;
+            });
+        },
+        //Force update queue in flow to add more tracks
+        '$root.queue.data.length'() {
+            this.showQueue = false;
+            this.$nextTick(() => {
+                this.showQueue = true;
+            });
         }
     }
 };
