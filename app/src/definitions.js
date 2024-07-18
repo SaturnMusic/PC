@@ -217,6 +217,16 @@ class SmartTrackList { // !
     }
 }
 
+class DeezerFlow {
+    constructor(json, target) {
+        this.title = json.title;
+        this.image = new DeezerImage(json.assets.dynamicPageIcon, json.__TYPE__);
+        this.id = json.id;
+        this.description = json.description;
+        this.target = target;
+    }
+}
+
 class DeezerPage {
     constructor(json) {
         this.title = json.title;
@@ -261,6 +271,8 @@ class ChannelSectionItem {
         //Parse data
         switch (this.type) {
             case 'flow':
+                this.data = new DeezerFlow(json.data, json.target);
+                break;
             case 'smarttracklist':
                 // console.log("smarttl: ", json.data) // Discover
                 this.data = new SmartTrackList(json.data);
