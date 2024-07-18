@@ -21,7 +21,8 @@
                     <ArtistTile v-if='item.type == "artist"' :artist='item.data' card></ArtistTile>
                     <DeezerChannel v-if='item.type == "channel"' :channel='item.data' class='mb-2'></DeezerChannel>
                     <AlbumTile v-if='item.type == "album"' :album='item.data' card></AlbumTile>
-                    <SmartTrackList v-if='item.type == "smarttracklist" || item.type == "flow"' :stl='item.data'></SmartTrackList>
+                    <SmartTrackList v-if='item.type == "smarttracklist"' :stl='item.data'></SmartTrackList>
+                    <DeezerFlow v-if='item.type == "flow"' :stl='item.data'></DeezerFlow>
                 </div>
                 <div v-if='section.hasMore' class='mx-2 align-center justify-center d-flex'>
                     <v-btn @click='showMore(section)' color='primary'>
@@ -38,7 +39,8 @@
                     <ArtistTile v-if='item.type == "artist"' :artist='item.data' card></ArtistTile>
                     <DeezerChannel v-if='item.type == "channel"' :channel='item.data' class='mb-2'></DeezerChannel>
                     <AlbumTile v-if='item.type == "album"' :album='item.data' card></AlbumTile>
-                    <SmartTrackList v-if='item.type == "smarttracklist" || item.type == "flow"' :stl='item.data'></SmartTrackList>
+                    <SmartTrackList v-if='item.type == "smarttracklist"' :stl='item.data'></SmartTrackList>
+                    <DeezerFlow v-if='item.type == "flow"' :stl='item.data'></DeezerFlow>
                 </div>
             </div>
 
@@ -54,10 +56,11 @@ import ArtistTile from '@/components/ArtistTile.vue';
 import DeezerChannel from '@/components/DeezerChannel.vue';
 import AlbumTile from '@/components/AlbumTile.vue';
 import SmartTrackList from '@/components/SmartTrackList.vue';
+import DeezerFlow from '../components/DeezerFlow.vue';
 
 export default {
     name: 'DeezerPage',
-    components: {PlaylistTile, ArtistTile, DeezerChannel, AlbumTile, SmartTrackList},
+    components: {PlaylistTile, ArtistTile, DeezerChannel, AlbumTile, SmartTrackList, DeezerFlow},
     props: {
         target: String
     },

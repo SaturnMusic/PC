@@ -433,10 +433,10 @@ new Vue({
         },
         //Load more SmartTrackList tracks
         async loadSTL() {
-            if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'smarttracklist') {
-                let data = await this.$axios.get('/smarttracklist/' + this.queue.source.data);
+            if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'smarttracklist' && this.queue.source.type && this.queue.source.type == 'flow') {
+                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.data);
                 if (data.data) {
-                    this.queue.data = this.queue.data.concat(data.data);
+                    this.replaceQueue(this.queue.data.concat(data.data));
                 }
                 this.savePlaybackInfo();
             }

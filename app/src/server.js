@@ -383,11 +383,12 @@ app.get('/page', async (req, res) => {
 });
 
 //Get smart track list or flow tracks
-app.get('/smarttracklist/:id', async (req, res) => {
+app.get('/smarttracklist/:type?/:id', async (req, res) => {
     let id = req.params.id;
-    
+    let type = req.params.type ? req.params.type : undefined;
+
     //Flow not normal STL
-    if (id == 'flow') {
+    if (id == 'flow' || type == 'flow') { // Not so clean check to know if it's flow
         let data = await deezer.callApi('radio.getUserRadio', {
             user_id: deezer.userId
         });
