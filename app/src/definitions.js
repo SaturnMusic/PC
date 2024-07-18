@@ -137,9 +137,28 @@ class DeezerImage {
         this.thumb = DeezerImage.url(this.hash, this.type, 264);
     }
     static url(hash, type, size = 264) {
-        if (!hash)
+        if (!hash) {
             return `https://e-cdns-images.dzcdn.net/images/${type}/${size}x${size}-000000-80-0-0.jpg`;
-        return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.jpg`;
+        } else {
+            return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.jpg`;
+        }
+    }
+}
+
+class FlowImage {
+    constructor(hash, type='cover') {
+        this.hash = hash;
+        this.type = type;
+        //Create full and thumb, to standardize size and because functions aren't preserved
+        this.full = FlowImage.url(this.hash, this.type, 1400);
+        this.thumb = FlowImage.url(this.hash, this.type, 264);
+    }
+    static url(hash, type, size = 264) {
+        if (!hash) {
+            return `https://e-cdns-images.dzcdn.net/images/${type}/${size}x${size}-000000-80-0-0.png`;
+        } else {
+            return `https://e-cdns-images.dzcdn.net/images/${type}/${hash}/${size}x${size}-000000-80-0-0.png`;
+        }
     }
 }
 
@@ -220,7 +239,7 @@ class SmartTrackList { // !
 class DeezerFlow {
     constructor(json, target) {
         this.title = json.title;
-        this.image = new DeezerImage(json.assets.dynamicPageIcon, json.__TYPE__);
+        this.image = new FlowImage(json.assets.dynamicPageIcon, 'cover');
         this.id = json.id;
         this.description = json.description;
         this.target = target;
@@ -271,6 +290,7 @@ class ChannelSectionItem {
         //Parse data
         switch (this.type) {
             case 'flow':
+                // console.log(json.data)
                 this.data = new DeezerFlow(json.data, json.target);
                 break;
             case 'smarttracklist':

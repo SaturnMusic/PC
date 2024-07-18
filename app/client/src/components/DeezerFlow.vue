@@ -1,13 +1,13 @@
 <template>
 <div>
 
-    <v-card max-width='175px' max-height='220px' height='220px' @click='play' :loading='loading' elevation='0' color='transparent'>
+    <v-card max-width='175px' max-height='220px' @click='play' :loading='loading' elevation='0' color='transparent'>
         
         <v-img v-if="stl.image && stl.image.thumb" :src='stl.image.thumb'>
             <v-card-title class='font-weight-black text-truncate text-h6 pa-1 ps-3' style="text-shadow: 1.3px 1.3px 6px rgba(0, 0, 0, 0.65)">{{stl.title}}</v-card-title>
         </v-img>
 
-        <div class='pa-2 text-subtitle-2'>{{stl.description}}</div>
+        <!-- <div class='pa-2 text-subtitle-2'>{{stl.description}}</div> -->
     </v-card>
 
 </div>
