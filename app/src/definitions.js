@@ -239,7 +239,9 @@ class ChannelSection {
     constructor(json) {
         //Parse layout
         switch (json.layout) {
+            case 'filterable-grid':
             case 'grid': this.layout = 'grid'; break;
+            case 'horizontal-list':
             case 'horizontal-grid': this.layout = 'row'; break;
             default: this.layout = 'row'; break;
         }
@@ -276,6 +278,11 @@ class ChannelSectionItem {
             case 'album':
                 this.data = new Album(json.data);
                 break;
+
+            // case 'track':
+            // case 'song':
+            //     this.data = new TrackMix(json.data);
+            //     break; 
         }
     }
 }
