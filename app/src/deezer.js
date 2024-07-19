@@ -240,7 +240,7 @@ class DeezerAPI {
     }
 
 
-    // Updated URL gen from yours truly @ github.com/SluttySpider
+    // Updated URL gen from yours truly @ github.com/Ascensionist
     // both tokens are refreshed on call so i might change that later on to speed the process up
     async generateUrl(trackId, md5origin, mediaVersion, quality = 3) {
 

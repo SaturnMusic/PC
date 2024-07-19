@@ -88,7 +88,7 @@
                 hiya!! please star the repo
             </v-card-title>
             <v-card-text>
-                github.com/SluttySpider
+                github.com/Ascensionist
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
