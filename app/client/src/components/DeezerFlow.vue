@@ -1,13 +1,15 @@
 <template>
 <div>
 
-    <v-card max-width='175px' max-height='220px' @click='play' :loading='loading' elevation='0' color='transparent'>
-        
-        <v-img v-if="stl.image && stl.image.thumb" :src='stl.image.thumb'>
-            <v-card-title class='font-weight-black text-truncate text-h6 pa-1 ps-3' style="text-shadow: 1.3px 1.3px 6px rgba(0, 0, 0, 0.65)">{{stl.title}}</v-card-title>
-        </v-img>
-
-        <!-- <div class='pa-2 text-subtitle-2'>{{stl.description}}</div> -->
+    <v-card max-height='200px' width='180px' @click='play' loading='loading' color='transparent' elevation='0'>
+        <div class='d-flex justify-center'>
+            <v-avatar size='150' class='ma-1'>
+                <v-img v-if="stl.image && stl.image.thumb" :src='stl.image.thumb'>
+                    <!-- <v-card-title class='font-weight-black text-truncate text-h6 pa-1 ps-3' style="text-shadow: 1.3px 1.3px 6px rgba(0, 0, 0, 0.65)">{{stl.title}}</v-card-title> -->
+                </v-img>
+            </v-avatar>
+        </div>
+        <div class='pa-2 text-subtitle-2 text-center text-truncate'>{{stl.title}}</div>
     </v-card>
 
 </div>

@@ -274,7 +274,10 @@ class ChannelSection {
             case 'horizontal-grid': this.layout = 'row'; break;
             default: this.layout = 'row'; break;
         }
-        this.title = json.title;
+        switch (json.title) {
+            case 'Mixes inspired by...': break;
+            default: this.title = json.title; break;
+        }
         this.hasMore = json.hasMoreItems ? true : false;
         this.target = json.target;
         this.items = json.items.map((i) => new ChannelSectionItem(i));

@@ -40,6 +40,13 @@
                     <DeezerChannel v-if='item.type == "channel"' :channel='item.data' class='mb-2'></DeezerChannel>
                     <AlbumTile v-if='item.type == "album"' :album='item.data' card></AlbumTile>
                     <SmartTrackList v-if='item.type == "smarttracklist"' :stl='item.data'></SmartTrackList>
+                    <!-- <DeezerFlow v-if='item.type == "flow"' :stl='item.data'></DeezerFlow> -->
+                </div>
+            </div>
+
+            <div class='d-flex' style='overflow-x: auto; overflow-y: hidden;'>
+
+                <div v-for='(item, index) in section.items' :key='"item"+index' class='mr-4 my-2'>
                     <DeezerFlow v-if='item.type == "flow"' :stl='item.data'></DeezerFlow>
                 </div>
             </div>
