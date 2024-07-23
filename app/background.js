@@ -175,10 +175,6 @@ if (!singleInstanceLock) {
 
 //Create window
 app.on('ready', async () => {
-    //No mac
-    if (platform == 'darwin')
-        process.exit(-1);
-
     await startServer();
     //Server mode
     if (args['--server']) return;
