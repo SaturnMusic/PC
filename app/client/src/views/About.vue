@@ -37,6 +37,14 @@
                 <v-list-item-title class='font-weight-bold'>{{$t("Discord")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
+        <v-list-item @click='openUrl("https://fund.saturnclient.dev/")'>
+            <v-list-item-icon>
+                <v-icon>mdi-currency-btc</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+                <v-list-item-title class='font-weight-bold'>{{$t("Donate")}}</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
     </v-list>
 
     <h1 class='my-2 px-2'>{{$t("Credits:")}}</h1>
@@ -44,13 +52,13 @@
         <v-list-item @click='mattDialog = true'>
             <v-list-item-content>
                 <v-list-item-title class='font-weight-bold'>Matt</v-list-item-title>
-                <v-list-item-subtitle>Desktop Developer</v-list-item-subtitle>
+                <v-list-item-subtitle>Developer</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
         <v-list-item @click='bw86Dialog = true'>
             <v-list-item-content>
                 <v-list-item-title class='font-weight-bold'>bw86</v-list-item-title>
-                <v-list-item-subtitle>Logo Designer, Mobile Developer</v-list-item-subtitle>
+                <v-list-item-subtitle>Logo Designer, Developer</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
         <v-list-item>
