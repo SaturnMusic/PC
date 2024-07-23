@@ -3,6 +3,9 @@
 ### Your go-to **ToS Compliant** Custom Deezer Client
 ### ⚠️ A premium account is required in order to use this client
 
+### Donations
+https://fund.saturnclient.dev/
+
 # Featuring:
 - FLAC & MP3 320 support
 - BYO Last.fm Integration (Safer solution!)
