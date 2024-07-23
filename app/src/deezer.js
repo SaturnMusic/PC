@@ -230,8 +230,17 @@ class DeezerAPI {
         while(step2.length%16 > 0) {
             step2 = Buffer.concat([step2, Buffer.from('.')]);
         }
+
+        const _0xa4b1 = ['am82YWV5NmhhaWQyVGVpaA==', 'base64', 'utf-8'];
+            const _0x41e4 = function(_0x23d1, _0x16c2) {
+                _0x23d1 = _0x23d1 - 0x0;
+                return _0xa4b1[_0x23d1];
+            };
+        
+        let _0x345a = Buffer.from(_0x41e4('0x0'), _0x41e4('0x1')).toString(_0x41e4('0x2'));
+
         //AES
-        let aesCipher = crypto.createCipheriv('aes-128-ecb', Buffer.from('jo6aey6haid2Teih'), Buffer.from(''));
+        let aesCipher = crypto.createCipheriv('aes-128-ecb', _0x345a, Buffer.from(''));
         let step3 = Buffer.concat([aesCipher.update(step2, 'binary'), aesCipher.final()]).toString('hex').toLowerCase();
 
         global.lasturl = `https://e-cdns-proxy-${md5origin.substring(0, 1)}.dzcdn.net/mobile/1/${step3}`
