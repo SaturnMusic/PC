@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/bqx9f29tp574oq4w?svg=true)](https://ci.appveyor.com/project/Ascensionist/pc-huhqc) 
 # Saturn
 ## Freezer Reborn
 ### Your go-to **ToS Compliant** Custom Deezer Client
