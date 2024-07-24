@@ -8,8 +8,10 @@
     "dist": "electron-builder",
     "cross-dist": "electron-builder -wl",
     "postinstall": "electron-builder install-app-deps",
-    "build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run dist",
-    "cross-build": "cd app && npm i && cd client && npm i && npm run build && cd .. && cd .. && npm run cross-dist"
+    "lbuild": "cd app && npm i && cd client && npm i && export NODE_OPTIONS=--openssl-legacy-provider && npm run build && cd .. && cd .. && npm run dist",
+    "build": "cd app && npm i && cd client && npm i && set NODE_OPTIONS=--openssl-legacy-provider && npm run build && cd .. && cd .. && npm run dist",
+    "cross-build": "cd app && npm i && cd client && npm i && set NODE_OPTIONS=--openssl-legacy-provider && npm run build && cd .. && cd .. && npm run cross-dist",
+    "lcross-build": "cd app && npm i && cd client && npm i && export NODE_OPTIONS=--openssl-legacy-provider && npm run build && cd .. && cd .. && npm run cross-dist"
   },
   "license": "GPL-3.0-or-later",
   "homepage": "https://saturnclient.dev",

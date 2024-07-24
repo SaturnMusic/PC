@@ -19,7 +19,7 @@ https://fund.saturnclient.dev/
 
 ## Building
 
-Requirements: NodeJS 12+  
+Requirements: NodeJS 17+  
 
 You can build binary using npm script:
 ```
