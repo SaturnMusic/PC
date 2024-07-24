@@ -362,7 +362,7 @@ app.get('/page', async (req, res) => {
             'grid-preview-two': st,
             'grid': st,
             'horizontal-grid': st,
-            'horizontal-list': [ 'track', 'song' ],
+            'horizontal-list': [ 'song' ],
             'item-highlight': [ 'radio' ],
             'large-card': ['album', 'external-link', 'playlist', 'show', 'video-link'],
             'list': [ 'episode' ],
