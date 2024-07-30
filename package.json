@@ -14,7 +14,7 @@
     "lcross-build": "cd app && npm i && cd client && npm i && export NODE_OPTIONS=--openssl-legacy-provider && npm run build && cd .. && cd .. && npm run cross-dist"
   },
   "license": "GPL-3.0-or-later",
-  "homepage": "https://saturnclient.dev",
+  "homepage": "https://saturn.kim",
   "devDependencies": {
     "electron": "^19.1.9",
     "electron-builder": "^24.12.0"

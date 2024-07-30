@@ -6,14 +6,14 @@
         v{{data.version}}
     </div>
     <br>
-    <div v-if='update' class='text-center text-h6 font-weight-bold mb-4' @click='openUrl("https://saturnclient.dev")'>
+    <div v-if='update' class='text-center text-h6 font-weight-bold mb-4' @click='openUrl("https://saturn.kim")'>
         {{$t("New update available:")}} {{update.version}}
         <v-btn text color='primary' outlined class='mx-2'>{{$t("Visit website")}}</v-btn>
     </div>
 
     <h1 class='my-2 px-2'>{{$t("Links:")}}</h1>
     <v-list>
-        <v-list-item @click='openUrl("https://saturnclient.dev")'>
+        <v-list-item @click='openUrl("https://saturn.kim")'>
             <v-list-item-icon>
                 <v-icon>mdi-earth</v-icon>
             </v-list-item-icon>
@@ -29,7 +29,7 @@
                 <v-list-item-title class='font-weight-bold'>{{$t("Telegram Group")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
-        <v-list-item @click='openUrl("https://saturnclient.dev/discord")'>
+        <v-list-item @click='openUrl("https://saturn.kim/discord")'>
             <v-list-item-icon>
                 <v-icon>mdi-discord</v-icon>
             </v-list-item-icon>
@@ -37,7 +37,7 @@
                 <v-list-item-title class='font-weight-bold'>{{$t("Discord")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
-        <v-list-item @click='openUrl("https://fund.saturnclient.dev/")'>
+        <v-list-item @click='openUrl("https://fund.saturn.kim/")'>
             <v-list-item-icon>
                 <v-icon>mdi-currency-btc</v-icon>
             </v-list-item-icon>

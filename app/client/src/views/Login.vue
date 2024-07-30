@@ -38,7 +38,7 @@
 
         <br>
         <span class='mt-8 text-caption'>
-            {{$t("2k24 saturnclient.dev")}}
+            {{$t("2k24 saturn.kim")}}
         </span>
     </div>
 

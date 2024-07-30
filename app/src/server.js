@@ -539,7 +539,7 @@ app.get('/about', async (req, res) => {
 
 app.get('/updates', async (req, res) => {
     try {
-        let response = await axios.get('https://saturnclient.dev/api/versions');
+        let response = await axios.get('https://saturn.kim/api/versions');
         //New version
         if (compareVersions(response.data.pc.latest, packageJson.version) >= 1) {
             res.send(response.data.pc.versions[0]);
