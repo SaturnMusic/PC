@@ -49,7 +49,7 @@
                 </v-row>
 
                 <!-- Controls -->
-                <v-row no-gutters class='ma-4'>
+                <v-row no-gutters class='ma-4' v-if='$rooms.allowControls()'>
                     <v-col>
                         <v-btn icon x-large @click='$root.skip(-1)'>
                             <v-icon size='42px'>mdi-skip-previous</v-icon>
@@ -69,16 +69,20 @@
                         </v-btn>
                     </v-col>
                 </v-row>
+                <!-- Rooms -->
+                <v-row no-gutters class='ma-4' v-if='!$rooms.allowControls()'>
+                    <div style='height: 50px;'></div>
+                </v-row>
 
                 <!-- Bottom actions -->
                 <div class='d-flex mx-2 mb-2'>
                     
-                    <v-btn icon @click='repeatClick'>
+                    <v-btn icon @click='repeatClick' v-if='!$rooms.room'>
                         <v-icon v-if='$root.repeat == 0 || !$root.repeat'>mdi-repeat</v-icon>
                         <v-icon color='primary' v-if='$root.repeat == 1'>mdi-repeat</v-icon>
                         <v-icon color='primary' v-if='$root.repeat == 2'>mdi-repeat-once</v-icon>
                     </v-btn>
-                    <v-btn icon @click='$root.shuffle()'>
+                    <v-btn icon @click='$root.shuffle()' v-if='!$rooms.room'>
                         <v-icon color='primary' v-if='$root.shuffled'>mdi-shuffle</v-icon>
                         <v-icon v-if='!$root.shuffled'>mdi-shuffle</v-icon>
                     </v-btn>
@@ -277,11 +281,23 @@ export default {
             this.$emit('close');
         },
         seek(v) {
+            //Rooms
+            if (!this.$rooms.allowControls()) {
+                this.seeking = false;
+                return;
+            }
+
             this.$root.seek(v * 1000);
             this.seeking = false;
         },
         //Mouse event seek
         seekEvent(v) {
+            //Rooms
+            if (!this.$rooms.allowControls()) {
+                this.seeking = false;
+                return;
+            }
+
             let seeker = this.$refs.seeker;
             let offsetp = (v.pageX - seeker.$el.offsetLeft) / seeker.$el.clientWidth;
             let pos = offsetp * this.$root.duration();

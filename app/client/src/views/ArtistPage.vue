@@ -21,7 +21,7 @@
             </div>
             
             <div class='my-2'>
-                <v-btn color='primary' class='mx-1' @click='play'>
+                <v-btn color='primary' class='mx-1' @click='play' v-if='!$rooms.room'>
                     <v-icon left>mdi-play</v-icon>
                     {{$t("Play top")}}
                 </v-btn>
@@ -36,7 +36,7 @@
                     </div>
                     
                 </v-btn>
-                <v-btn color='green' class='mx-1' @click='radio' v-if='artist.radio'>
+                <v-btn color='green' class='mx-1' @click='radio' v-if='artist.radio && $rooms.allowControls()'>
                     <v-icon left>mdi-radio</v-icon>
                     {{$t("Radio")}}
                 </v-btn>
@@ -143,6 +143,8 @@ export default {
     },
     methods: {
         playIndex(index) {
+            //Rooms
+            if (this.$rooms.room) return;
             this.$root.queue.source = {
                 text: this.artist.name,
                 source: 'top',
@@ -204,6 +206,8 @@ export default {
             this.loadMoreAlbums();
         },
         async radio() {
+            //Rooms
+            if (!this.$rooms.allowControls()) return;
             //Load
             let res = await this.$axios.get('/smartradio/' + this.artist.id);
             if (res.data) {

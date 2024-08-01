@@ -23,7 +23,7 @@ let sockets = [];
 const app = express();
 app.use(express.json({limit: '50mb'}));
 app.use(express.static(path.join(__dirname, '../client', 'dist')));
-app.use(cors({origin: 'http://localhost:8080'}));
+app.use(cors({origin: 'http://127.0.0.1:10069'}));
 //Server
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
@@ -31,7 +31,7 @@ const io = new Server(server, {
     path: '/socket',
     //CORS for webpack debug
     cors: {
-        origin: 'http://localhost:8080',
+        origin: 'http://127.0.0.1:10069',
         methods: ["GET", "POST"],
     }
 });

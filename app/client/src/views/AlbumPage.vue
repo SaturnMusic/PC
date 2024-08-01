@@ -27,7 +27,7 @@
             </div>
             
             <div class='my-2'>
-                <v-btn color='primary' class='mx-1' @click='play'>
+                <v-btn color='primary' class='mx-1' @click='play' v-if='!$rooms.room'>
                     <v-icon left>mdi-play</v-icon>
                     {{$t("Play")}}
                 </v-btn>
@@ -94,6 +94,8 @@ export default {
     methods: {
         //Load album and play at index
         playTrack(index) {
+            //Rooms
+            if (this.$rooms.room) return;
             this.$root.queue.source = {
                 text: this.album.title,
                 source: 'album',

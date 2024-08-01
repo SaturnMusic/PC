@@ -28,7 +28,7 @@
             </div>
             
             <div class='my-2 d-flex'>
-                <v-btn color='primary' class='mr-1' @click='play'>
+                <v-btn color='primary' class='mr-1' @click='play' v-if='!$rooms.room'>
                     <v-icon left>mdi-play</v-icon>
                     {{$t('Play')}}
                 </v-btn>
@@ -150,6 +150,8 @@ export default {
     },
     methods: {
         async playIndex(index) {
+            //Rooms
+            if (this.$rooms.room) return;
             //Load tracks
             if (this.playlist.tracks.length == 0)
                 await this.loadAllTracks();

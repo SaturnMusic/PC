@@ -120,6 +120,9 @@ export default {
             });
         },
         async play() {
+            //Rooms
+            if (!this.$rooms.allowControls()) return;
+
             let album = this.album;
             //Load album from API if tracks are missing
             if (album.tracks.length == 0) {
@@ -139,6 +142,9 @@ export default {
         },
         //Add to queue
         async addQueue() {
+            //Rooms
+            if (!this.$rooms.allowControls()) return;
+
             let album = this.album;
             //Load album from API if tracks are missing
             if (album.tracks.length == 0) {

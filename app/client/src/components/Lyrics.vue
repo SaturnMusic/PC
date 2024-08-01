@@ -104,6 +104,9 @@ export default {
         },
         //Seek to lyric in song
         seekTo(i) {
+            //Rooms
+            if (!this.$rooms.allowControls()) return;
+
             this.$root.seek(this.lyrics.lyrics[i].offset);
         }
     },

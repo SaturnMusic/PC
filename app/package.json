@@ -1,7 +1,7 @@
 {
   "name": "saturn",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "",
   "main": "background.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "arg": "^5.0.0",
+    "md5": "^2.3.0",
     "axios": "^0.21.1",
     "browser-id3-writer": "^4.4.0",
     "chalk": "^4.1.1",

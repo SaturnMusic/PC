@@ -44,7 +44,7 @@
             </template>
             <v-list dense>
                 <!-- Play Next -->
-                <v-list-item dense @click='playNext'>
+                <v-list-item dense @click='playNext' v-if='$rooms.allowControls()'>
                     <v-list-item-icon>
                         <v-icon>mdi-playlist-plus</v-icon>
                     </v-list-item-icon>
@@ -53,12 +53,21 @@
                     </v-list-item-content>
                 </v-list-item>
                 <!-- Add to end of queue -->
-                <v-list-item dense @click='addQueue'>
+                <v-list-item dense @click='addQueue' v-if='$rooms.allowControls()'>
                     <v-list-item-icon>
                         <v-icon>mdi-playlist-plus</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title>{{$t("Add to queue")}}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <!-- Request song (Rooms) -->
+                <v-list-item dense @click='$rooms.request(track)' v-if='$rooms.room && !$rooms.allowControls()'>
+                    <v-list-item-icon>
+                        <v-icon>mdi-playlist-plus</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Request song in room</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
                 <!-- Add to library -->
@@ -107,7 +116,7 @@
                     </v-list-item-content>
                 </v-list-item>
                 <!-- Play track mix -->
-                <v-list-item dense @click='trackMix'>
+                <v-list-item dense @click='trackMix' v-if='!$rooms.room'>
                     <v-list-item-icon>
                         <v-icon>mdi-playlist-music</v-icon>
                     </v-list-item-icon>
@@ -199,9 +208,19 @@ export default {
     methods: {
         //Add track next to queue
         playNext() {
+            //Rooms
+            if (this.$rooms.allowControls()) {
+                this.$rooms.addQueue(this.track, true);
+                return;
+            }
             this.$root.addTrackIndex(this.track, this.$root.queue.index+1);
         },
         addQueue() {
+            //Rooms
+            if (this.$rooms.allowControls()) {
+                this.$rooms.addQueue(this.track);
+                return;
+            }
             this.$root.queue.data.push(this.track);
         },
         addLibrary() {

@@ -1,7 +1,7 @@
 <template>
 <v-list dense>
     <!-- Play album -->
-    <v-list-item dense @click='$emit("play")'>
+    <v-list-item dense @click='$emit("play")' v-if='!$rooms.room'>
         <v-list-item-icon>
             <v-icon>mdi-play</v-icon>
         </v-list-item-icon>
@@ -10,7 +10,7 @@
         </v-list-item-content>
     </v-list-item>
     <!-- Add to queue -->
-    <v-list-item dense @click='$emit("addQueue")'>
+    <v-list-item dense @click='$emit("addQueue")' v-if='!$rooms.room'>
         <v-list-item-icon>
             <v-icon>mdi-playlist-plus</v-icon>
         </v-list-item-icon>

@@ -27,6 +27,10 @@ export default {
     methods: {
         //Load stt as source
         async play() {
+            //Rooms
+            if (this.$rooms.room) return;
+
+
             this.loading = true;
             
             //Load data

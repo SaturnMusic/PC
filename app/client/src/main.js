@@ -6,6 +6,7 @@ import axios from 'axios';
 import VueEsc from 'vue-esc';
 import i18n from './js/i18n';
 import { io } from "socket.io-client";
+import {Rooms} from './js/rooms';
 
 //Globals
 let ipcRenderer;
@@ -55,6 +56,9 @@ Vue.prototype.$filesize = (bytes) => {
 Vue.prototype.$io = io("http://localhost:10069", {
     path: '/socket'
 });
+
+//Rooms
+Vue.use(new Rooms('https://clubs.saturn.kim'));
 
 Vue.config.productionTip = false;
 Vue.use(VueEsc);
@@ -120,22 +124,27 @@ new Vue({
         play() {
             if (!this.audio || this.state != 1) return;
             this.audio.play();
+            this.$rooms.togglePlayback(true);
             this.state = 2;
         },
         pause() {
             if (!this.audio || this.state != 2) return;
             this.audio.pause();
+            this.$rooms.togglePlayback(false);
             this.state = 1;
         },
         toggle() {
             if (this.isPlaying()) return this.pause();
             this.play();
         },
-        seek(t) {
+        seek(t, room = true) {
             if (!this.audio || isNaN(t) || !t) return;
             //ms -> s
             this.audio.currentTime = (t / 1000);
             this.position = t;
+
+            if (room)
+                this.$rooms.sync();
 
             this.updateState();
         },
@@ -159,6 +168,13 @@ new Vue({
         //Play at index in queue
         async playIndex(index) {
             if (index >= this.queue.data.length || index < 0) return;
+
+            //Rooms
+            if (this.$rooms.room) {
+                this.$rooms.playIndex(index);
+                return;
+            }
+
             this.queue.index = index;
             await this.playTrack(this.queue.data[this.queue.index]);
             this.play();
@@ -166,6 +182,7 @@ new Vue({
         },
         //Skip n tracks, can be negative
         async skip(n) {
+            this.pause()
             let newIndex = this.queue.index + n;
             //Out of bounds
             if (newIndex < 0 || newIndex >= this.queue.data.length) return;
@@ -247,14 +264,18 @@ new Vue({
             //MediaSession
             this.updateMediaSession();
             
-            //Loads more tracks if end of list
-            this.loadSTL();
+            //Loads more tracks if end of list, if not in room
+            if (!this.$rooms.room)
+                this.loadSTL();
         },
         //Configure html audio element
         configureAudio() {
             //Listen position updates
             this.audio.addEventListener('timeupdate', async () => {
                 this.position = this.audio.currentTime * 1000;
+
+                //Rooms
+                if (this.$rooms.room) return;
 
                 //Gapless playback
                 if (this.position >= (this.duration() - (this.settings.crossfadeDuration + 7500)) && this.state == 2) {
@@ -310,6 +331,13 @@ new Vue({
             this.audio.volume = this.volume * this.volume;
             
             this.audio.addEventListener('ended', async () => {
+                //Track end
+                if (this.$rooms.room) {
+                    this.$rooms.trackEnd();
+                    return;
+                }
+
+
                 if (this.gapless.crossfade) return;
 
                 //Repeat track
@@ -596,12 +624,21 @@ new Vue({
 
             //Control from electron
             ipcRenderer.on('togglePlayback', () => {
+                //Rooms
+                if (!this.$rooms.allowControls()) return;
+
                 this.toggle();
             });
             ipcRenderer.on('skipNext', () => {
+                //Rooms
+                if (!this.$rooms.allowControls()) return;
+
                 this.skip(1);
             });
             ipcRenderer.on('skipPrev', () => {
+                //Rooms
+                if (!this.$rooms.allowControls()) return;
+
                 this.skip(-1);
             })
         }
@@ -630,6 +667,8 @@ new Vue({
     },
 
     mounted() {
+        //Bind rooms
+        this.$roomsBind().setBind();
         //Save settings on unload
         window.addEventListener('beforeunload', () => {
             this.savePlaybackInfo();
@@ -647,6 +686,9 @@ new Vue({
             if (e.target.tagName == "INPUT") return;
             //Don't handle if specials
             if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+            //Rooms
+            if (!this.$rooms.allowControls()) return;
 
             //K toggle playback
             if (e.code == "KeyK" || e.code == "Space") this.$root.toggle();
@@ -681,6 +723,9 @@ new Vue({
         state() {
             this.updateMediaSession();
             this.updateState();
+            //Rooms
+            if (this.$rooms.room && this.$rooms.allowControls())
+                this.$rooms.sync();
         },
         //Update volume with curve
         volume() {

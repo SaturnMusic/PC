@@ -144,6 +144,14 @@
           <v-list-item-title>{{$t('About')}}</v-list-item-title>
         </v-list-item>
 
+        <!-- Rooms -->
+        <v-list-item link to='/rooms' v-if='isUp()'>
+          <v-list-item-icon>
+            <v-icon>mdi-earth</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Clubs</v-list-item-title>
+        </v-list-item>
+
       </v-list>
     </v-navigation-drawer>
 
@@ -227,6 +235,7 @@
 
         <!-- Controls -->
         <v-col class='text-center' cols='12' sm='auto'>
+          <div v-if='$rooms.allowControls()'>
             <v-btn icon large @click.stop='$root.skip(-1)'>
                 <v-icon>mdi-skip-previous</v-icon>
             </v-btn>
@@ -237,6 +246,7 @@
             <v-btn icon large @click.stop='$root.skipNext'>
                 <v-icon>mdi-skip-next</v-icon>
             </v-btn>
+          </div>
         </v-col>
 
 
@@ -346,6 +356,7 @@
 
 <script>
 import FullscreenPlayer from '@/views/FullscreenPlayer.vue';
+import axios from 'axios';
 
 export default {
   name: 'App',
@@ -374,6 +385,15 @@ export default {
     closePlayer() {
       if (this.showPlayer) this.showPlayer = false;
       this.volume = this.$root.volume;
+    },
+    async isUp() { // do not show button if site is down because consistency
+      await axios.get('https://clubs.saturn.kim/a')
+      .catch(function (error) {
+        if (error.response) {
+          if (error.response.status == 404) { return true; } // index doesnt exist so this actually makes sense
+          else { return false; }
+        }
+      });
     },
     //Navigation
     previous() {
@@ -440,6 +460,7 @@ export default {
       }
     },
     seek(val) {
+      if (!this.$rooms.allowControls()) return;
       this.$root.seek(Math.round((val / 100) * this.$root.duration()));
     },
     async exitApp() {

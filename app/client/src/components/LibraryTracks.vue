@@ -107,6 +107,9 @@ export default {
         },
         //Play track
         async play(id) {
+            //Rooms
+            if (this.$rooms.room) return;
+
             this.$root.queue.source = {
                 text: 'Loved tracks',
                 source: 'playlist',

@@ -1,7 +1,7 @@
 <template>
 <div>
     <h1>{{$t("Library")}} 
-        <v-btn class='ml-2 mb-1' icon @click='shuffle'>
+        <v-btn class='ml-2 mb-1' icon @click='shuffle' v-if='$rooms.allowControls()'>
             <v-icon>mdi-shuffle</v-icon>
         </v-btn>
     </h1>
@@ -81,6 +81,10 @@ export default {
     },
     methods: {
         async shuffle() {
+            //Rooms
+            if (this.$rooms.room) return;
+
+
             let res = await this.$axios.get('/shuffle');
             if (res && res.data) {
                 this.$root.queue.source = {

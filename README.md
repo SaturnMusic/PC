@@ -8,6 +8,7 @@
 https://fund.saturn.kim/
 
 # Featuring:
+- [Listening Parties (Clubs)](https://clubs.saturn.kim)
 - FLAC & MP3 320 support
 - BYO Last.fm Integration (Safer solution!)
 - Discord Listen Together & RPC

@@ -84,6 +84,10 @@ export default {
                 //Load profile
                 let res = await this.$axios.get('/profile');
                 this.$root.profile = res.data;
+
+                //Auth rooms
+                this.$rooms.setProfile(this.$root.profile);
+
                 this.$router.push('/home');
                 //Cache library
                 this.$root.cacheLibrary();

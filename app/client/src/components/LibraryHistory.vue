@@ -55,6 +55,9 @@ export default {
         },
         //Load as queue and play
         play(index) {
+            //Rooms
+            if (this.$rooms.room) return;
+
             this.$root.queue.source = {
                 text: this.$t('History'),
                 source: 'history',

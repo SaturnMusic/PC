@@ -129,6 +129,9 @@ export default {
     },
     //On click for track tile
     playTrack(i) {
+      //Rooms
+      if (this.$rooms.room) return;
+
       this.$root.queue.source = {
         text: this.$t("Search"),
         source: "search",

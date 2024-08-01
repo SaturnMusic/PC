@@ -27,7 +27,7 @@
                 </template>
                 <v-list dense>
                     <!-- Play -->
-                    <v-list-item dense @click='play'>
+                    <v-list-item dense @click='play' v-if='!$rooms.room'>
                         <v-list-item-icon>
                             <v-icon>mdi-play</v-icon>
                         </v-list-item-icon>
@@ -134,6 +134,8 @@ export default {
     },
     methods: {
         async play() {
+            if (this.$rooms.room) return;
+
             let playlist = this.playlist;
             //Load if no tracks
             if (!playlist || playlist.tracks.length == 0)
