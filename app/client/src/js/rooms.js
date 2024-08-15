@@ -231,7 +231,7 @@ class Rooms {
         });
 
         this.io.on('disconnect', () => {
-            window.location.reload();
+            if (this.room) { window.location.reload(); }
         });
     }
 
