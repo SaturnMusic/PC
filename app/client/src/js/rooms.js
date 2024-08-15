@@ -263,7 +263,8 @@ class Rooms {
         this.io.emit('sync', {
             playing: playing,
             position: this.vue.$root.position,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            admin: this.allowControls()
         });
     }
 
@@ -273,7 +274,8 @@ class Rooms {
         this.io.emit('sync', {
             playing: this.vue.$root.state == 2,
             position: this.vue.$root.position,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            admin: this.allowControls()
         });
     }
 
