@@ -158,10 +158,17 @@ export default {
         },
         async reverseSort() {
             //Preload tracks if not sorted yet
-            if (this.tracks.length < this.count) 
+            if (this.tracks.length < this.count) {
                 await this.sort(0);
+            }
+
             this.isReversed = !this.isReversed;
-            this.tracks.reverse();
+            var half = Math.floor(this.tracks.length / 2);
+            for (var i = 0; i < half; i++) {
+                var temp = this.tracks[this.tracks.length - 1 - i];
+                this.tracks[this.tracks.length - 1 - i] = this.tracks[i];
+                this.tracks[i] = temp;
+            }
         },
         removedTrack(id) {
             this.tracks.splice(this.tracks.findIndex(t => t.id == id), 1);

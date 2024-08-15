@@ -122,7 +122,13 @@ export default {
         },
         async reverseSort() {
             this.isReversed = !this.isReversed;
-            this.playlists.reverse();
+            
+            var half = Math.floor(this.playlists.length / 2);
+            for (var i = 0; i < half; i++) {
+                var temp = this.playlists[this.playlists.length - 1 - i];
+                this.playlists[this.playlists.length - 1 - i] = this.playlists[i];
+                this.playlists[i] = temp;
+            }
         },
     },
     mounted() {

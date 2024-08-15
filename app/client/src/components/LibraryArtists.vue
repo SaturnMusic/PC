@@ -97,7 +97,13 @@ export default {
         },
         async reverseSort() {
             this.isReversed = !this.isReversed;
-            this.artists.reverse();
+
+            var half = Math.floor(this.artists.length / 2);
+            for (var i = 0; i < half; i++) {
+                var temp = this.artists[this.artists.length - 1 - i];
+                this.artists[this.artists.length - 1 - i] = this.artists[i];
+                this.artists[i] = temp;
+            }
         }
     },
     mounted() {

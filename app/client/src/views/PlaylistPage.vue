@@ -297,7 +297,13 @@ export default {
             if (this.playlist.tracks.length < this.playlist.trackCount) 
                 await this.sort(0);
             this.isReversed = !this.isReversed;
-            this.playlist.tracks.reverse();
+
+            var half = Math.floor(this.playlist.tracks.length / 2);
+            for (var i = 0; i < half; i++) {
+                var temp = this.playlist.tracks[this.playlist.tracks.length - 1 - i];
+                this.playlist.tracks[this.playlist.tracks.length - 1 - i] = this.playlist.tracks[i];
+                this.playlist.tracks[i] = temp;
+            }
         },
     },
     mounted() {

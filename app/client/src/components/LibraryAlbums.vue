@@ -102,7 +102,13 @@ export default {
         },
         async reverseSort() {
             this.isReversed = !this.isReversed;
-            this.albums.reverse();
+            
+            var half = Math.floor(this.albums.length / 2);
+            for (var i = 0; i < half; i++) {
+                var temp = this.albums[this.albums.length - 1 - i];
+                this.albums[this.albums.length - 1 - i] = this.albums[i];
+                this.albums[i] = temp;
+            }
         },
     },
     mounted() {
