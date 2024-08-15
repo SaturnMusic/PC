@@ -45,6 +45,7 @@ class Settings {
         this.contentCountry = 'US';
         this.sidebarOpen = false;
         this.nativeTopBar = false;
+        this.perfmode = false;
 
         this.lastfmkey = '';
         this.lastfmsecret = '';

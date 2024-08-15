@@ -186,6 +186,17 @@
                 <v-list-item-subtitle>{{$t("Requires restart of Freezer!")}}</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
+        <!-- Performance mode -->
+        <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.perfmode' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Performance Mode")}}</v-list-item-title>
+                <v-list-item-subtitle>{{$t("Only display essential track info. Incompatible with Clubs.")}}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{$t("Greatly improves general load time")}}</v-list-item-subtitle>
+            </v-list-item-content>
+        </v-list-item>
         <!-- Background image -->
         <v-text-field
             class='px-4 my-2'

@@ -1,21 +1,21 @@
 <template>
 <v-list-item two-line @click='$emit("click")' :ripple='ripple' @contextmenu.prevent="menu = true">
-    <v-list-item-avatar>
+    <v-list-item-avatar v-if='!$root.settings.perfmode'>
         <v-img :src='track.albumArt.thumb'></v-img>
     </v-list-item-avatar>
     <v-list-item-content>
         <v-list-item-title
             :class='{"primary--text": track.id == ($root.track ? $root.track : {id: null}).id}'
-        >{{track.title}}<span v-if='track.explicit' class='red--text text-overline pl-2'>E</span></v-list-item-title>
+        >{{track.title}}<span v-if='track.explicit && !$root.settings.perfmode' class='red--text text-overline pl-2'>E</span></v-list-item-title>
         <v-list-item-subtitle>{{track.artistString}}</v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-action>
+    <v-list-item-action v-if='!$root.settings.perfmode'>
         <!-- Duration -->
         <div class='text-caption mx-2'>
             {{$duration(track.duration)}}
         </div>
     </v-list-item-action>
-    <v-list-item-action>
+    <v-list-item-action v-if='!$root.settings.perfmode'>
         <!-- Quick add/remoev to library -->
         <v-btn @click.stop='addLibrary' icon v-if='!isLibrary'>
             <v-icon>mdi-heart</v-icon>
@@ -24,7 +24,7 @@
             <v-icon>mdi-heart-remove</v-icon>
         </v-btn>
     </v-list-item-action>
-    <v-list-item-action>
+    <v-list-item-action v-if='!$root.settings.perfmode'>
         <!-- Quick add to playlist -->
         <v-btn @click.stop='popup = true' icon v-if='!removeQueue'>
             <v-icon>mdi-playlist-plus</v-icon>
@@ -34,7 +34,7 @@
             <v-icon>mdi-close</v-icon>
         </v-btn>
     </v-list-item-action>
-    <v-list-item-action>
+    <v-list-item-action v-if='!$root.settings.perfmode'>
         <!-- Context menu -->
         <v-menu v-model='menu' offset-y offset-x absolue>
             <template v-slot:activator="{on, attrs}">
