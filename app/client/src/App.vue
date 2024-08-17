@@ -388,10 +388,23 @@ export default {
     },
     async isUp() { // do not show button if site is down because consistency
       await axios.get('https://clubs.saturn.kim/a')
+      .then(function (response) {
+        console.log(response)
+        return true;
+      })
       .catch(function (error) {
         if (error.response) {
-          if (error.response.status == 404) { return true; } // index doesnt exist so this actually makes sense
-          else { return false; }
+          if (error.response.status == 404) {
+            return true; // /a doesn't exist, so this actually makes sense
+          } else {
+            return false;
+          }
+        } else if (error.request) {
+          // No response received
+          return false;
+        } else {
+          // Some other error
+          return false;
         }
       });
     },
