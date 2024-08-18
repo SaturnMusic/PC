@@ -2,6 +2,7 @@ const LastfmAPI = require('lastfmapi');
 const DiscordRPC = require('discord-rpc');
 const {EventEmitter} = require('events');
 const logger = require('./winston');
+const packageInfo = require('../package.json');
 
 class Integrations extends EventEmitter {
 
@@ -107,7 +108,10 @@ class Integrations extends EventEmitter {
                 let richPresence = {
                     state: data.track.artistString,
                     details: data.track.title,   
-                    largeImageKey: 'icon',
+                    largeImageKey: data.track.albumArt.thumb,
+                    largeImageText: data.track.album.title,
+                    smallImageKey: 'small',
+                    smallImageText: `Saturn v${packageInfo.version}`,
                     instance: true,
                 }
                 //Show timestamp only if playing
