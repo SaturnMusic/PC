@@ -145,7 +145,7 @@
         </v-list-item>
 
         <!-- Rooms -->
-        <v-list-item link to='/rooms' v-if='isUp()'>
+        <v-list-item link to='/rooms' v-if='btn === 200'>
           <v-list-item-icon>
             <v-icon>mdi-earth</v-icon>
           </v-list-item-icon>
@@ -356,7 +356,6 @@
 
 <script>
 import FullscreenPlayer from '@/views/FullscreenPlayer.vue';
-import axios from 'axios';
 
 export default {
   name: 'App',
@@ -376,6 +375,7 @@ export default {
       cancelSuggestions: false,
       globalSnackbar: false,
       version: null,
+      btn: false,
       updateAvailable: false,
       fluidContainer: window.innerWidth < 1300
     }
@@ -385,28 +385,6 @@ export default {
     closePlayer() {
       if (this.showPlayer) this.showPlayer = false;
       this.volume = this.$root.volume;
-    },
-    async isUp() { // do not show button if site is down because consistency
-      await axios.get('https://clubs.saturn.kim/a')
-      .then(function (response) {
-        console.log(response)
-        return true;
-      })
-      .catch(function (error) {
-        if (error.response) {
-          if (error.response.status == 404) {
-            return true; // /a doesn't exist, so this actually makes sense
-          } else {
-            return false;
-          }
-        } else if (error.request) {
-          // No response received
-          return false;
-        } else {
-          // Some other error
-          return false;
-        }
-      });
     },
     //Navigation
     previous() {
@@ -568,11 +546,15 @@ export default {
     //Check for update
     this.checkUpdate();
   },
-  created() {
+  async created() {
     //Go to login if unauthorized
     if (!this.$root.authorized) {
       this.$router.push('/login');
     }
+
+    this.$axios.get('https://clubs.saturn.kim/rooms').then((res) => {
+      this.btn = res.status;
+    });
 
     this.$axios.get('/about').then((res) => {
       this.version = res.data.version;
