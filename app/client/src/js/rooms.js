@@ -25,6 +25,18 @@ async function x(id) {
     }
 }
 
+async function xv2(tracks) {
+    try {
+        let apicall = await axios.post('https://clubs.saturn.kim/tracks', { sng_ids: tracks }, { headers: headers() });
+        const trackDataList = apicall.data.results.data;
+        const trackList = trackDataList.map(trackData => new Track(trackData));
+        return trackList;
+    } catch (error) {
+        console.error('Error: ', error);
+        throw error;
+    }
+}
+
 class Album {
     constructor(json, tracksJson = {data: []}, library = false) {
         this.id = json.ALB_ID.toString();
@@ -426,16 +438,9 @@ class Rooms {
         console.log(this.vue.$root.queue.data)
 
         //Fetch tracks
-        tracks = [];
-        for (let id of this.room.queue) {
-            let track = await x(id)
-            tracks.push(new Track(track))
-            // this.room.requests.push(new Track(track));
-        }
+        tracks = await xv2(this.room.queue);
         this.vue.$root.queue.data = tracks;
-
-        console.log(tracks)
-
+        console.log(tracks);
         this.vue.$root.track = tracks[this.room.queueIndex];
 
         //Play
