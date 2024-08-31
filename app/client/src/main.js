@@ -518,7 +518,8 @@ new Vue({
             if (!this.track || !this.track.id) return;
 
             this.logListenId = this.track.id;
-            await this.$axios.post(`/log`, this.track);
+            // this.$root.queue.source.data is supposed to exist for this to work which i think it always does
+            await this.$axios.post(`/log/${this.$root.queue.source.data}`, this.track);
         },
         //Send state update to integrations
         async updateState() {
