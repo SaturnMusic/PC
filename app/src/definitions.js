@@ -180,6 +180,23 @@ class DeezerChannelImage {
     }
 }
 
+class FancyChannelImage {
+    constructor(type='channel', background_color, md5) {
+        this.color = background_color;
+        this.type = type;
+
+        this.full = FancyChannelImage.url(md5);
+        this.thumb = FancyChannelImage.url(md5);
+    }
+    static url(md5) {
+        if (md5) {
+            return `https://e-cdns-images.dzcdn.net/images/misc/${md5.md5}/134x264-000000-80-0-0.png`;
+        } else { 
+            
+        }
+    }
+}
+
 class SearchResults {
     constructor(json) {
         this.albums = json.ALBUM.data.map((a) => new Album(a));
@@ -256,7 +273,12 @@ class DeezerPage {
 class DeezerChannel {
     constructor(json, target) {
         this.title = json.title;
-        this.image = new DeezerChannelImage("channel", json.background_color); // !
+        if (Object.keys(json).includes('pictures')) {
+            if (json.pictures.some(picture => 'md5' in picture)) {
+                var x = json.pictures.find(picture => 'md5' in picture);
+                this.image = new FancyChannelImage("channel", json.background_color, x); 
+            } else { this.image = new DeezerChannelImage("channel", json.background_color); }
+        } else { this.image = new DeezerChannelImage("channel", json.background_color); }
         this.color = json.background_color;
         this.id = json.id;
         this.slug = json.slug; //Hopefully it's used for path
