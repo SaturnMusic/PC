@@ -482,19 +482,34 @@ app.delete('/downloads/:index', async (req, res) => {
 });
 
 //Log listen to deezer & lastfm
-app.post('/log/:id', async (req, res) => {
+app.post('/log/:id/:s', async (req, res) => {
     //LastFM
     integrations.scrobbleLastFM(req.body.title, req.body.album.title, req.body.artists[0].name);
 
     //Deezer
     if (settings.logListen) {
+        var t;
+        switch (req.params.s) {
+            case "album":
+                t = "album_page"
+                break;
+            case "artist":
+                t = "artist_page"
+                break;
+            case "search":
+                t = "search_page"
+                break;
+            default:
+                t = "search_page"
+                break;
+        }
         let a = await deezer.callApi('log.listen', {
             params: {
                 timestamp: Math.floor(new Date() / 1000),
                 ts_listen: Math.floor(new Date() / 1000),
                 type: 1,
                 stat: {seek: 0, pause: 0, sync: 0},
-                ctxt: { t: "playlist_page", id: req.params.id },
+                ctxt: { t: t, id: req.params.id },
                 media: {id: req.body.id, type: 'song', format: 'MP3_128'}
             }
         });
