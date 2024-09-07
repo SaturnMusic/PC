@@ -351,7 +351,7 @@ class Rooms {
     //Check if controlling audio allowed
     allowControls() {
         if (!this.room) return true;
-        let user = this.room.users.find(u => u.id == this.profile.id.toString());
+        let user = this.room.users.find(u => u.sid == this.io.id);
         return user.admin;
     }
 
