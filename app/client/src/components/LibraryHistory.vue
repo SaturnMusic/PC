@@ -60,8 +60,8 @@ export default {
 
             this.$root.queue.source = {
                 text: this.$t('History'),
-                source: 'history',
-                data: null
+                source: 'history_page',
+                data: this.$root.profile.id
             };
             this.$root.replaceQueue(this.tracks);
             this.$root.playIndex(index);

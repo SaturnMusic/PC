@@ -43,7 +43,7 @@ export default {
             //Send to player
             this.$root.queue.source = {
                 text: this.stl.title,
-                source: 'smarttracklist',
+                source: 'dynamic_page_smarttracklist',
                 data: this.stl.id
             };
             this.$root.replaceQueue(res.data);

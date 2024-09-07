@@ -426,7 +426,7 @@ class Rooms {
         //Setup queue
         this.vue.$root.queue.index = this.room.queueIndex;
         this.vue.$root.queue.source = {
-            text: 'Room',
+            text: 'Club',
             source: 'room',
             data: 'room'
         };

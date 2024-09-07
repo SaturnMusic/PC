@@ -112,7 +112,7 @@ export default {
 
             this.$root.queue.source = {
                 text: 'Loved tracks',
-                source: 'playlist',
+                source: 'playlist_page',
                 data: this.$root.profile.favoritesPlaylist
             };
             this.$root.replaceQueue(this.tracks);

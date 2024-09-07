@@ -147,7 +147,7 @@ export default {
             if (this.$rooms.room) return;
             this.$root.queue.source = {
                 text: this.artist.name,
-                source: 'top',
+                source: 'artist_top',
                 data: this.artist.id
             };
             this.$root.replaceQueue(this.artist.topTracks);
@@ -213,7 +213,7 @@ export default {
             if (res.data) {
                 this.$root.queue.source = {
                     text: this.artist.name,
-                    source: 'radio',
+                    source: 'artist_smartradio',
                     data: this.artist.id
                 };
                 this.$root.replaceQueue(res.data);

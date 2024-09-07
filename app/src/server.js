@@ -488,28 +488,13 @@ app.post('/log/:id/:s', async (req, res) => {
 
     //Deezer
     if (settings.logListen) {
-        var t;
-        switch (req.params.s) {
-            case "album":
-                t = "album_page"
-                break;
-            case "artist":
-                t = "artist_page"
-                break;
-            case "search":
-                t = "search_page"
-                break;
-            default:
-                t = "search_page"
-                break;
-        }
         let a = await deezer.callApi('log.listen', {
             params: {
                 timestamp: Math.floor(new Date() / 1000),
                 ts_listen: Math.floor(new Date() / 1000),
                 type: 1,
                 stat: {seek: 0, pause: 0, sync: 0},
-                ctxt: { t: t, id: req.params.id },
+                ctxt: { t: req.params.s, id: req.params.id },
                 media: {id: req.body.id, type: 'song', format: 'MP3_128'}
             }
         });

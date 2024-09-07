@@ -145,7 +145,7 @@ export default {
             //Play
             this.$root.queue.source = {
                 text: playlist.title,
-                source: 'playlist',
+                source: 'playlist_page',
                 data: playlist.id
             };
             this.$root.replaceQueue(playlist.tracks);

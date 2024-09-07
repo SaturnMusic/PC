@@ -89,7 +89,7 @@ export default {
             if (res && res.data) {
                 this.$root.queue.source = {
                     text: this.$t('Shuffle'),
-                    source: 'playlist',
+                    source: 'playlist_page',
                     data: 0
                 };
                 this.$root.replaceQueue(res.data);

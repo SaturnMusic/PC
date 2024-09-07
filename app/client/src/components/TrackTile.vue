@@ -266,7 +266,7 @@ export default {
             let res = await this.$axios.get('/trackmix/' + this.track.id);
             this.$root.queue.source = {
                 text: this.$t('Track Mix'),
-                source: 'trackmix',
+                source: 'track_mix_contextual',
                 data: this.track.id
             };
             this.$root.replaceQueue(res.data);

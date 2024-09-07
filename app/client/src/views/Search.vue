@@ -134,7 +134,7 @@ export default {
 
       this.$root.queue.source = {
         text: this.$t("Search"),
-        source: "search",
+        source: "search_page",
         data: this.query
       };
       this.$root.replaceQueue(this.data.tracks);
