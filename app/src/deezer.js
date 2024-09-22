@@ -3,8 +3,8 @@ const axios = require('axios');
 const decryptor = require('nodeezcryptor');
 const querystring = require('querystring');
 const https = require('https');
-const {Transform, Readable} = require('stream');
-const {Track} = require('./definitions');
+const { Transform, Readable } = require('stream');
+const { Track } = require('./definitions');
 const logger = require('./winston');
 
 global.lasturl;
@@ -35,6 +35,88 @@ class DeezerAPI {
         }
     }
 
+    // Method to get JSON Web Token
+    async getJsonWebToken() {
+        const url = 'https://auth.deezer.com/login/arl?jo=p&rto=c&i=c';
+
+        // Prepare cookies
+        const cookies = `arl=${this.arl}${this.sid ? '; sid=' + this.sid : ''}`;
+
+        try {
+            // Make POST request
+            const response = await axios.post(url, {}, {
+                headers: {
+                    'Cookie': cookies
+                }
+            });
+
+            // Return JWT if exists
+            return response.data.jwt || '';
+        } catch (error) {
+            console.error('Error getting JSON Web Token:', error);
+            throw new Error('Failed to retrieve JWT');
+        }
+    }
+
+    // Wrapper because Electron is piece of shit
+    async callPipeApi(body) {
+        const jwtToken = await this.getJsonWebToken();
+        if (this.electron) return await this._callPipeApiElectron(body, jwtToken);
+        return await this._callPipeApiAxios(body, jwtToken);
+    }
+
+    async _callPipeApiElectron(body, jwtToken) {
+        const net = require('electron').net;
+        let data = await new Promise((resolve, reject) => {
+            // Create request
+            let req = net.request({
+                method: 'POST', // Changed to POST
+                url: `https://pipe.deezer.com/api/`,
+                responseType: 'json',
+                headers: {
+                    ...this.headers(),
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json' // Set content type
+                }
+            });
+
+            // Write the body to the request
+            req.write(JSON.stringify(body));
+
+            req.on('response', (res) => {
+                let data = Buffer.alloc(0);
+                // Response data
+                res.on('data', (buffer) => {
+                    data = Buffer.concat([data, buffer]);
+                });
+                res.on('end', () => {
+                    resolve(data);
+                });
+            });
+            req.on('error', (err) => {
+                reject(err);
+            });
+            req.end();
+        });
+
+        data = JSON.parse(data.toString('utf-8'));
+        return data;
+    }
+
+    async _callPipeApiAxios(body, jwtToken) {
+        let res = await axios({
+            url: `https://pipe.deezer.com/api/`,
+            method: 'POST', // Changed to POST
+            headers: {
+                ...this.headers(),
+                'Content-Type': 'application/json', // Set content type
+                'Authorization': `Bearer ${jwtToken}`,
+            },
+            data: body // Use 'data' instead of 'body'
+        });
+        return res.data;
+    }
+
     //Wrapper for api calls, because axios doesn't work reliably with electron
     async callApi(method, args = {}, gatewayInput = null) {
         if (this.electron) return await this._callApiElectronNet(method, args, gatewayInput);
@@ -45,16 +127,16 @@ class DeezerAPI {
     async _callApiAxios(method, args = {}, gatewayInput = null) {
         let data = await axios({
             url: this.url,
-            method: 'POST',           
+            method: 'POST',
             headers: this.headers(),
             responseType: 'json',
             params: Object.assign({
-                api_version: '1.0',
-                api_token: this.token ? this.token : 'null',
-                input: '3',
-                method: method,
-            },
-                gatewayInput ? {gateway_input: JSON.stringify(gatewayInput)} : null
+                    api_version: '1.0',
+                    api_token: this.token ? this.token : 'null',
+                    input: '3',
+                    method: method,
+                },
+                gatewayInput ? { gateway_input: JSON.stringify(gatewayInput) } : null
             ),
             data: args
         });
@@ -87,15 +169,15 @@ class DeezerAPI {
             let req = net.request({
                 method: 'POST',
                 url: this.url + '?' + querystring.stringify(Object.assign({
-                    api_version: '1.0',
-                    api_token: this.token ? this.token : 'null',
-                    input: '3',
-                    method: method,
-                },
-                    gatewayInput ? {gateway_input: JSON.stringify(gatewayInput)} : null
+                        api_version: '1.0',
+                        api_token: this.token ? this.token : 'null',
+                        input: '3',
+                        method: method,
+                    },
+                    gatewayInput ? { gateway_input: JSON.stringify(gatewayInput) } : null
                 )),
             });
-            
+
             req.on('response', (res) => {
                 let data = Buffer.alloc(0);
 
@@ -123,7 +205,7 @@ class DeezerAPI {
 
             //Write headers
             let headers = this.headers();
-            for(let key of Object.keys(headers)) {
+            for (let key of Object.keys(headers)) {
                 req.setHeader(key, headers[key]);
             }
             req.write(JSON.stringify(args));
@@ -173,7 +255,7 @@ class DeezerAPI {
                 method: 'GET',
                 url: `https://api.deezer.com/${encodeURIComponent(path)}/${encodeURIComponent(params)}`
             });
-            
+
             req.on('response', (res) => {
                 let data = Buffer.alloc(0);
                 //Response data
@@ -227,16 +309,16 @@ class DeezerAPI {
             magic
         ]);
         //Padding
-        while(step2.length%16 > 0) {
+        while (step2.length % 16 > 0) {
             step2 = Buffer.concat([step2, Buffer.from('.')]);
         }
 
         const _0xa4b1 = ['am82YWV5NmhhaWQyVGVpaA==', 'base64', 'utf-8'];
-            const _0x41e4 = function(_0x23d1, _0x16c2) {
-                _0x23d1 = _0x23d1 - 0x0;
-                return _0xa4b1[_0x23d1];
-            };
-        
+        const _0x41e4 = function(_0x23d1, _0x16c2) {
+            _0x23d1 = _0x23d1 - 0x0;
+            return _0xa4b1[_0x23d1];
+        };
+
         let _0x345a = Buffer.from(_0x41e4('0x0'), _0x41e4('0x1')).toString(_0x41e4('0x2'));
 
         //AES
@@ -257,8 +339,8 @@ class DeezerAPI {
 
         var l;
 
-        if (!((Math.floor(new Date().getTime() / 1000) - global.resetTimer) >= 3600)) {   // unix ts
-            l = global.token;                                                             // deezer api provides the token expiry but like why use it lol
+        if (!((Math.floor(new Date().getTime() / 1000) - global.resetTimer) >= 3600)) { // unix ts
+            l = global.token; // deezer api provides the token expiry but like why use it lol
         } else {
             var userdata = await this.callApi('deezer.getUserData');
             var l = userdata.results.USER.OPTIONS.license_token
@@ -270,37 +352,33 @@ class DeezerAPI {
 
         if (quality != 1) {
 
-            var trackData = await this.callApi('song.getData', {sng_id: trackId});
+            var trackData = await this.callApi('song.getData', { sng_id: trackId });
 
             var t = trackData.results.TRACK_TOKEN
 
-        try {
-            if (t.toString() != null && l.toString() != null) {
+            try {
+                if (t.toString() != null && l.toString() != null) {
 
                     var qty;
 
-                            //9 - FLAC
-                        //3 - MP3 320
+                    //9 - FLAC
+                    //3 - MP3 320
                     //1 - MP3 128
 
-                    if ( quality == 3 ) {
+                    if (quality == 3) {
                         qty = "MP3_320"
-                    }
-                    else if ( quality == 1 ) {
+                    } else if (quality == 1) {
                         qty = "MP3_128"
-                    }
-                    else if ( quality == 9 ) {
+                    } else if (quality == 9) {
                         qty = "FLAC"
                     }
 
                     let json = {
                         'license_token': l,
-                        'media': [
-                            {
-                                'type': 'FULL',
-                                'formats': [{'cipher': 'BF_CBC_STRIPE', 'format': qty}]
-                            }
-                        ],
+                        'media': [{
+                            'type': 'FULL',
+                            'formats': [{ 'cipher': 'BF_CBC_STRIPE', 'format': qty }]
+                        }],
                         'track_tokens': [t]
                     }
 
@@ -313,8 +391,8 @@ class DeezerAPI {
                             data: json,
                             responseType: 'json'
                         });
-                    
-                    } catch (err) { "failed on request: " + err}
+
+                    } catch (err) { "failed on request: " + err }
 
                     if (qty != 'FLAC') {
                         global.lasturl = res.data.data[0].media[0].sources[1].url
@@ -327,11 +405,11 @@ class DeezerAPI {
                         return {
                             encrypted: true,
                             url: res.data.data[0].media[0].sources[1].url
-                        }; 
+                        };
                     }
 
 
-            } else { logger.warn("track token or license token are null") }
+                } else { logger.warn("track token or license token are null") }
             } catch (e) {
                 logger.warn('failed: ' + e);
             }
@@ -340,7 +418,7 @@ class DeezerAPI {
                 encrypted: true,
                 url: DeezerAPI.getUrl(trackId, md5origin, mediaVersion, quality)
             };
-    }
+        }
     }
 
 
@@ -360,11 +438,11 @@ class DeezerAPI {
             return qualityInfo;
         }
         //ID Fallback
-        let trackData = await this.callApi('deezer.pageTrack', {sng_id: qualityInfo.trackId});
+        let trackData = await this.callApi('deezer.pageTrack', { sng_id: qualityInfo.trackId });
         try {
             if (trackData.results.DATA.FALLBACK.SNG_ID.toString() != qualityInfo.trackId) {
                 let newId = trackData.results.DATA.FALLBACK.SNG_ID.toString();
-                let newTrackData = await this.callApi('deezer.pageTrack', {sng_id: newId});
+                let newTrackData = await this.callApi('deezer.pageTrack', { sng_id: newId });
                 let newTrack = new Track(newTrackData.results.DATA);
                 return this.fallback(newTrack.streamUrl);
             }
@@ -375,7 +453,7 @@ class DeezerAPI {
         try {
             let publicTrack = this.callPublicApi('track', 'isrc:' + trackData.results.DATA.ISRC);
             let newId = publicTrack.id.toString();
-            let newTrackData = await this.callApi('deezer.pageTrack', {sng_id: newId});
+            let newTrackData = await this.callApi('deezer.pageTrack', { sng_id: newId });
             let newTrack = new Track(newTrackData.results.DATA);
             return this.fallback(newTrack.streamUrl);
         } catch (e) {
@@ -422,7 +500,7 @@ class DeezerStream extends Readable {
 
     async open(offset, end) {
         //Prepare decryptor
-        this.decryptor = new DeezerDecryptionStream(this.qualityInfo.trackId, {offset});
+        this.decryptor = new DeezerDecryptionStream(this.qualityInfo.trackId, { offset });
         this.decryptor.on('end', () => {
             this.ended = true;
         });
@@ -431,10 +509,10 @@ class DeezerStream extends Readable {
         let offsetBytes = offset - (offset % 2048);
         end = (end == -1) ? '' : end;
         let url = global.lasturl;
-        
+
         //Open request
         await new Promise((res) => {
-            this.request = https.get(url, {headers: {'Range': `bytes=${offsetBytes}-${end}`}}, (r) => {
+            this.request = https.get(url, { headers: { 'Range': `bytes=${offsetBytes}-${end}` } }, (r) => {
                 r.pipe(this.decryptor);
                 this.size = parseInt(r.headers['content-length'], 10) + offsetBytes;
                 res();
@@ -462,7 +540,7 @@ class DeezerStream extends Readable {
 
 class DeezerDecryptionStream extends Transform {
 
-    constructor(trackId, options = {offset: 0}) {
+    constructor(trackId, options = { offset: 0 }) {
         super();
         //Offset as n chunks
         this.offset = Math.floor(options.offset / 2048);
@@ -490,7 +568,7 @@ class DeezerDecryptionStream extends Transform {
                 slice = slice.slice(this.drop);
                 this.drop = 0;
             }
-            
+
             this.push(slice);
 
             //Replace original buffer
@@ -498,7 +576,7 @@ class DeezerDecryptionStream extends Transform {
         }
         //Save leftovers
         this.buffer = chunk;
-        
+
         next();
     }
 
@@ -513,4 +591,4 @@ class DeezerDecryptionStream extends Transform {
 }
 
 
-module.exports = {DeezerAPI, DeezerDecryptionStream, DeezerStream};
+module.exports = { DeezerAPI, DeezerDecryptionStream, DeezerStream };

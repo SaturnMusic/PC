@@ -6,11 +6,11 @@ const fs = require('fs');
 const compareVersions = require('compare-versions');
 const axios = require('axios').default;
 const logger = require('./winston');
-const {DeezerAPI, DeezerStream} = require('./deezer');
-const {Settings} = require('./settings');
-const {Track, Album, Artist, Playlist, DeezerProfile, SearchResults, DeezerLibrary, DeezerPage, Lyrics} = require('./definitions');
-const {DownloadManager} = require('./downloads');
-const {Integrations} = require('./integrations');
+const { DeezerAPI, DeezerStream } = require('./deezer');
+const { Settings } = require('./settings');
+const { Track, Album, Artist, Playlist, DeezerProfile, SearchResults, DeezerLibrary, DeezerPage, Lyrics } = require('./definitions');
+const { DownloadManager } = require('./downloads');
+const { Integrations } = require('./integrations');
 
 let settings;
 let deezer;
@@ -21,9 +21,9 @@ let sockets = [];
 
 //Express
 const app = express();
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, '../client', 'dist')));
-app.use(cors({origin: 'http://127.0.0.1:10069'}));
+app.use(cors({ origin: 'http://127.0.0.1:10069' }));
 //Server
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
@@ -37,18 +37,18 @@ const io = new Server(server, {
 });
 
 //Get playback info
-app.get('/playback', async (req, res) => {
+app.get('/playback', async(req, res) => {
     try {
         let data = await fs.promises.readFile(Settings.getPlaybackInfoPath(), 'utf-8');
         return res.json(data);
-    // eslint-disable-next-line no-empty
+        // eslint-disable-next-line no-empty
     } catch (e) {}
-    
+
     return res.json({});
 });
 
 //Save playback info
-app.post('/playback', async (req, res) => {
+app.post('/playback', async(req, res) => {
     if (req.body) {
         let data = JSON.stringify(req.body);
         await fs.promises.writeFile(Settings.getPlaybackInfoPath(), data, 'utf-8');
@@ -62,7 +62,7 @@ app.get('/settings', (req, res) => {
 });
 
 //Save settings
-app.post('/settings', async (req, res) => {
+app.post('/settings', async(req, res) => {
     if (req.body) {
         Object.assign(settings, req.body);
         downloadManager.settings = settings;
@@ -74,9 +74,9 @@ app.post('/settings', async (req, res) => {
 });
 
 //Post with body {"arl": ARL}
-app.post('/authorize', async (req, res) => {
+app.post('/authorize', async(req, res) => {
     if (!req.body.arl || req.body.arl.length < 100) return res.status(500).send('Invalid ARL');
-    
+
     //Check if ARL valid
     let electron = deezer.electron;
     deezer = new DeezerAPI(req.body.arl, electron);
@@ -94,26 +94,26 @@ app.post('/authorize', async (req, res) => {
 });
 
 //Get track by id
-app.get('/track/:id', async (req, res) => {
-    let data = await deezer.callApi('deezer.pageTrack', {sng_id: req.params.id.toString()});
+app.get('/track/:id', async(req, res) => {
+    let data = await deezer.callApi('deezer.pageTrack', { sng_id: req.params.id.toString() });
     res.send(new Track(data.results.DATA));
 });
 
 //Get album by id
-app.get('/album/:id', async (req, res) => {
-    let data = await deezer.callApi('deezer.pageAlbum', {alb_id: req.params.id.toString(), lang: settings.contentLanguage});
+app.get('/album/:id', async(req, res) => {
+    let data = await deezer.callApi('deezer.pageAlbum', { alb_id: req.params.id.toString(), lang: settings.contentLanguage });
     res.send(new Album(data.results.DATA, data.results.SONGS));
 });
 
 //Get artist by id
-app.get('/artist/:id', async (req, res) => {
-    let data = await deezer.callApi('deezer.pageArtist', {art_id: req.params.id.toString(), lang: settings.contentLanguage});
+app.get('/artist/:id', async(req, res) => {
+    let data = await deezer.callApi('deezer.pageArtist', { art_id: req.params.id.toString(), lang: settings.contentLanguage });
     res.send(new Artist(data.results.DATA, data.results.ALBUMS, data.results.TOP));
 });
 
 //Get playlist by id
 //start & full query parameters
-app.get('/playlist/:id', async (req, res) => {
+app.get('/playlist/:id', async(req, res) => {
     //Set anything to `full` query parameter to get entire playlist
     let nb = req.query.full ? 100000 : 50;
     let data = await deezer.callApi('deezer.pagePlaylist', {
@@ -127,8 +127,8 @@ app.get('/playlist/:id', async (req, res) => {
 });
 
 //DELETE playlist
-app.delete('/playlist/:id', async (req, res) => {
-    await deezer.callApi('playlist.delete', {playlist_id: req.params.id.toString()});
+app.delete('/playlist/:id', async(req, res) => {
+    await deezer.callApi('playlist.delete', { playlist_id: req.params.id.toString() });
     res.sendStatus(200);
 });
 
@@ -139,19 +139,21 @@ app.delete('/playlist/:id', async (req, res) => {
 //     type: 0, 1, 2 = public, private, collab
 //     track: trackID
 // }
-app.post('/playlist', async (req, res) => {
+app.post('/playlist', async(req, res) => {
     await deezer.callApi('playlist.create', {
         description: req.body.description,
         title: req.body.title,
         status: req.body.type,
-        songs: req.body.track ? [[req.body.track, 0]] : []
+        songs: req.body.track ? [
+            [req.body.track, 0]
+        ] : []
     });
 
     res.sendStatus(200);
 });
 
 //PUT edit playlist, see above create
-app.put('/playlist/:id', async (req, res) => {
+app.put('/playlist/:id', async(req, res) => {
     await deezer.callApi('playlist.update', {
         description: req.body.description,
         title: req.body.title,
@@ -163,11 +165,13 @@ app.put('/playlist/:id', async (req, res) => {
 
 //POST track to playlist
 //Body {"track": "trackId"}
-app.post('/playlist/:id/tracks', async (req, res) => {
+app.post('/playlist/:id/tracks', async(req, res) => {
     await deezer.callApi('playlist.addSongs', {
         offset: -1,
         playlist_id: req.params.id,
-        songs: [[req.body.track, 0]]
+        songs: [
+            [req.body.track, 0]
+        ]
     });
 
     res.sendStatus(200);
@@ -175,10 +179,12 @@ app.post('/playlist/:id/tracks', async (req, res) => {
 
 //DELETE track from playlist
 //Body {"track": "trackId"}
-app.delete('/playlist/:id/tracks', async (req, res) => {
+app.delete('/playlist/:id/tracks', async(req, res) => {
     await deezer.callApi('playlist.deleteSongs', {
         playlist_id: req.params.id,
-        songs: [[req.body.track, 0]]
+        songs: [
+            [req.body.track, 0]
+        ]
     });
 
     res.sendStatus(200);
@@ -186,7 +192,7 @@ app.delete('/playlist/:id/tracks', async (req, res) => {
 
 //Get more albums
 //ID = artist id, QP start = offset
-app.get('/albums/:id', async (req, res) => {
+app.get('/albums/:id', async(req, res) => {
     let data = await deezer.callApi('album.getDiscography', {
         art_id: parseInt(req.params.id.toString(), 10),
         discography_mode: "all",
@@ -200,7 +206,7 @@ app.get('/albums/:id', async (req, res) => {
 })
 
 //Get tracks from listening history
-app.get('/history', async (req, res) => {
+app.get('/history', async(req, res) => {
     let data = await deezer.callApi('deezer.pageProfile', {
         nb: 200,
         tab: "history",
@@ -211,20 +217,20 @@ app.get('/history', async (req, res) => {
 });
 
 //Search, q as query parameter
-app.get('/search', async (req, res) => {
-    let data = await deezer.callApi('deezer.pageSearch', {query: req.query.q, nb: 100});
+app.get('/search', async(req, res) => {
+    let data = await deezer.callApi('deezer.pageSearch', { query: req.query.q, nb: 100 });
     res.send(new SearchResults(data.results));
 });
 
 //Get user profile data
-app.get('/profile', async (req, res) => {
+app.get('/profile', async(req, res) => {
     let data = await deezer.callApi('deezer.getUserData');
     let profile = new DeezerProfile(data.results);
     res.send(profile);
 });
 
 //Get shuffled library
-app.get('/shuffle', async (req, res) => {
+app.get('/shuffle', async(req, res) => {
     let data = await deezer.callApi('tracklist.getShuffledCollection', {
         nb: 50,
         start: 0
@@ -233,7 +239,7 @@ app.get('/shuffle', async (req, res) => {
 });
 
 //Get list of `type` from library
-app.get('/library/:type', async (req, res) => {
+app.get('/library/:type', async(req, res) => {
     let type = req.params.type;
     //Normal
     if (type != 'tracks') {
@@ -256,48 +262,48 @@ app.get('/library/:type', async (req, res) => {
 });
 
 //DELETE from library
-app.delete('/library/:type', async (req, res) => {
+app.delete('/library/:type', async(req, res) => {
     let type = req.params.type;
     let id = req.query.id;
 
-    if (type == 'track') await deezer.callApi('favorite_song.remove', {SNG_ID: id});
-    if (type == 'album') await deezer.callApi('album.deleteFavorite', {ALB_ID: id});
-    if (type == 'playlist') await deezer.callApi('playlist.deleteFavorite', {playlist_id: parseInt(id, 10)});
-    if (type == 'artist') await deezer.callApi('artist.deleteFavorite', {ART_ID: id});
+    if (type == 'track') await deezer.callApi('favorite_song.remove', { SNG_ID: id });
+    if (type == 'album') await deezer.callApi('album.deleteFavorite', { ALB_ID: id });
+    if (type == 'playlist') await deezer.callApi('playlist.deleteFavorite', { playlist_id: parseInt(id, 10) });
+    if (type == 'artist') await deezer.callApi('artist.deleteFavorite', { ART_ID: id });
 
     res.sendStatus(200);
 });
 
 //PUT (add) to library
-app.put('/library/:type', async (req, res) => {
+app.put('/library/:type', async(req, res) => {
     let type = req.params.type;
     let id = req.query.id;
 
-    if (type == 'track') await deezer.callApi('favorite_song.add', {SNG_ID: id});
-    if (type == 'album') await deezer.callApi('album.addFavorite', {ALB_ID: id});
-    if (type == 'artist') await deezer.callApi('artist.addFavorite', {ART_ID: id});
-    if (type == 'playlist') await deezer.callApi('playlist.addFavorite', {parent_playlist_id: parseInt(id)});
+    if (type == 'track') await deezer.callApi('favorite_song.add', { SNG_ID: id });
+    if (type == 'album') await deezer.callApi('album.addFavorite', { ALB_ID: id });
+    if (type == 'artist') await deezer.callApi('artist.addFavorite', { ART_ID: id });
+    if (type == 'playlist') await deezer.callApi('playlist.addFavorite', { parent_playlist_id: parseInt(id) });
 
     res.sendStatus(200);
 });
 
 
 //Get streaming metadata, quality fallback
-app.get('/streaminfo/:info', async (req, res) => {
+app.get('/streaminfo/:info', async(req, res) => {
     let info = req.params.info;
     let quality = req.query.q ? req.query.q : 3;
     let qualityInfo = await deezer.fallback(info, quality);
 
     if (qualityInfo == null)
         return res.sendStatus(404).end();
-        
+
     //Generate stream URL before sending
     qualityInfo.generateUrl();
     return res.json(qualityInfo);
 });
 
 // S T R E A M I N G
-app.get('/stream/:info', async (req, res) => {
+app.get('/stream/:info', async(req, res) => {
     //Parse stream info
     let quality = req.query.q ? req.query.q : 3;
     let streamInfo = Track.getUrlInfo(req.params.info);
@@ -329,8 +335,8 @@ app.get('/stream/:info', async (req, res) => {
             'Content-Length': stream.size - start,
             'Content-Type': mime
         });
-    
-    //Normal (non range) request
+
+        //Normal (non range) request
     } else {
         res.writeHead(200, {
             'Content-Length': stream.size,
@@ -347,34 +353,34 @@ app.get('/stream/:info', async (req, res) => {
 });
 
 //Get deezer page
-app.get('/page', async (req, res) => {
+app.get('/page', async(req, res) => {
     let target = req.query.target.replace(/'/g, '');
 
-    let st = [ 'album', 'artist', 'artistLineUp', 'channel', 'livestream', 'flow', 'playlist', 'radio', 'show', 'smarttracklist', 'track', 'user', 'video-link', 'external-link' ];
+    let st = ['album', 'artist', 'artistLineUp', 'channel', 'livestream', 'flow', 'playlist', 'radio', 'show', 'smarttracklist', 'track', 'user', 'video-link', 'external-link'];
     let data = await deezer.callApi('page.get', {}, {
         'PAGE': target,
         'VERSION': '2.5',
         'SUPPORT': {
             'ads': [ /* 'native' */ ], //None
-            'deeplink-list': [ 'deeplink' ],
-            'event-card': [ 'live-event' ],
+            'deeplink-list': ['deeplink'],
+            'event-card': ['live-event'],
             'grid-preview-one': st,
             'grid-preview-two': st,
             'grid': st,
             'horizontal-grid': st,
-            'horizontal-list': [ 'song' ],
-            'item-highlight': [ 'radio' ],
+            'horizontal-list': ['song'],
+            'item-highlight': ['radio'],
             'large-card': ['album', 'external-link', 'playlist', 'show', 'video-link'],
-            'list': [ 'episode' ],
-            'message': [ 'call_onboarding' ],
-            'mini-banner': [ 'external-link' ],
-            'slideshow':        [ 'album', 'artist', 'channel', 'external-link', 'flow', 'livestream', 'playlist', 'show', 'smarttracklist', 'user', 'video-link' ],
-            'small-horizontal-grid': [ 'flow' ],
+            'list': ['episode'],
+            'message': ['call_onboarding'],
+            'mini-banner': ['external-link'],
+            'slideshow': ['album', 'artist', 'channel', 'external-link', 'flow', 'livestream', 'playlist', 'show', 'smarttracklist', 'user', 'video-link'],
+            'small-horizontal-grid': ['flow'],
             'long-card-horizontal-grid': st,
-            'filterable-grid': [ 'flow' ]
+            'filterable-grid': ['flow']
         },
         'LANG': settings.contentLanguage,
-        'OPTIONS': [ 'deeplink_newsandentertainment', 'deeplink_subscribeoffer' ]
+        'OPTIONS': ['deeplink_newsandentertainment', 'deeplink_subscribeoffer']
     });
 
     // logger.warn("data", data.results)
@@ -383,7 +389,7 @@ app.get('/page', async (req, res) => {
 });
 
 //Get smart track list or flow tracks
-app.get('/smarttracklist/:type?/:id', async (req, res) => {
+app.get('/smarttracklist/:type?/:id', async(req, res) => {
     let id = req.params.id;
     let type = req.params.type ? req.params.type : undefined;
 
@@ -411,29 +417,76 @@ app.get('/smarttracklist/:type?/:id', async (req, res) => {
 });
 
 //Artist smart radio
-app.get('/smartradio/:id', async (req, res) => {
-    let data = await deezer.callApi('smart.getSmartRadio', {art_id: req.params.id});
+app.get('/smartradio/:id', async(req, res) => {
+    let data = await deezer.callApi('smart.getSmartRadio', { art_id: req.params.id });
     res.send(data.results.data.map(t => new Track(t)));
 });
 
 //Track Mix
-app.get('/trackmix/:id', async (req, res) => {
-    let data = await deezer.callApi('song.getContextualTrackMix', {sng_ids: [req.params.id]});
+app.get('/trackmix/:id', async(req, res) => {
+    let data = await deezer.callApi('song.getContextualTrackMix', { sng_ids: [req.params.id] });
     res.send(data.results.data.map(t => new Track(t)));
 });
 
-//Load lyrics, ID = SONG ID
-app.get('/lyrics/:id', async (req, res) => {
-    let data = await deezer.callApi('song.getLyrics', {
-        sng_id: parseInt(req.params.id, 10)
-    });
-    if (!data.results || data.error.length > 0) return res.status(502).send('Lyrics not found!');
+// Load lyrics by song ID
+app.get('/lyrics/:id', async(req, res) => {
+    try {
+        // Create the GraphQL query string
+        const queryStringGraphQL = `
+            query SynchronizedTrackLyrics($trackId: String!) {
+              track(trackId: $trackId) {
+                id
+                isExplicit
+                lyrics {
+                  id
+                  copyright
+                  text
+                  writers
+                  synchronizedLines {
+                    lrcTimestamp
+                    line
+                    milliseconds
+                    duration
+                  }
+                }
+              }
+            }
+        `;
 
-    res.send(new Lyrics(data.results));
+        // Create the request parameters
+        const requestParams = {
+            operationName: 'SynchronizedTrackLyrics',
+            variables: { trackId: req.params.id },
+            query: queryStringGraphQL,
+        };
+
+        // Call the Pipe API
+        const pipeApiResponse = await deezer.callPipeApi(requestParams);
+
+        // Check if Pipe API returned valid lyrics
+        if (pipeApiResponse.data && pipeApiResponse.data.track.lyrics) {
+            return res.json(pipeApiResponse.data);
+        }
+
+        // Fallback to the legacy API if no lyrics are found or there are errors
+        const legacyApiResponse = await deezer.callApi('song.getLyrics', {
+            sng_id: parseInt(req.params.id, 10),
+        });
+
+        if (legacyApiResponse.results) {
+            return res.json(legacyApiResponse.results);
+        }
+
+        // No lyrics found in either API
+        res.status(502).send('Lyrics not found!');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 //Search Suggestions
-app.get('/suggestions/:query', async (req, res) => {
+app.get('/suggestions/:query', async(req, res) => {
     let query = req.params.query;
     try {
         let data = await deezer.callApi('search_getSuggestedQueries', {
@@ -447,26 +500,26 @@ app.get('/suggestions/:query', async (req, res) => {
 });
 
 //Post list of tracks to download
-app.post('/downloads', async (req, res) => {
+app.post('/downloads', async(req, res) => {
     downloadManager.addBatch(req.body);
 
     res.status(200).send('OK');
 });
 
 //PUT to /download to start
-app.put('/download', async (req, res) => {
+app.put('/download', async(req, res) => {
     await downloadManager.start();
     res.status(200).send('OK');
 });
 
 //DELETE to /download to stop/pause
-app.delete('/download', async (req, res) => {
+app.delete('/download', async(req, res) => {
     await downloadManager.stop();
     res.status(200).send('OK');
 })
 
 //Get all downloads
-app.get('/downloads', async (req, res) => {
+app.get('/downloads', async(req, res) => {
     res.json({
         downloading: downloadManager.downloading,
         queue: downloadManager.queue,
@@ -475,14 +528,14 @@ app.get('/downloads', async (req, res) => {
 });
 
 //Delete single download
-app.delete('/downloads/:index', async (req, res) => {
+app.delete('/downloads/:index', async(req, res) => {
     let index = parseInt(req.params.index, 10);
     await downloadManager.delete(index);
     res.status(200).end();
 });
 
 //Log listen to deezer & lastfm
-app.post('/log/:id/:s', async (req, res) => {
+app.post('/log/:id/:s', async(req, res) => {
     //LastFM
     integrations.scrobbleLastFM(req.body.title, req.body.album.title, req.body.artists[0].name);
 
@@ -493,9 +546,9 @@ app.post('/log/:id/:s', async (req, res) => {
                 timestamp: Math.floor(new Date() / 1000),
                 ts_listen: Math.floor(new Date() / 1000),
                 type: 1,
-                stat: {seek: 0, pause: 0, sync: 0},
+                stat: { seek: 0, pause: 0, sync: 0 },
                 ctxt: { t: req.params.s, id: req.params.id },
-                media: {id: req.body.id, type: 'song', format: 'MP3_128'}
+                media: { id: req.body.id, type: 'song', format: 'MP3_128' }
             }
         });
         logger.warn("log.listen: ", a)
@@ -504,7 +557,7 @@ app.post('/log/:id/:s', async (req, res) => {
 });
 
 //Last.FM authorization callback
-app.get('/lastfm', async (req, res) => {
+app.get('/lastfm', async(req, res) => {
     //Got token
     if (req.query.token) {
         let token = req.query.token;
@@ -520,25 +573,25 @@ app.get('/lastfm', async (req, res) => {
 
     //Get auth url
     res.json({
-        url: integrations.lastfm.getAuthenticationUrl({cb: `http://${req.socket.remoteAddress}:${settings.port}/lastfm`})
+        url: integrations.lastfm.getAuthenticationUrl({ cb: `http://${req.socket.remoteAddress}:${settings.port}/lastfm` })
     }).end();
 });
 
 //Get URL from deezer.page.link
-app.get('/fullurl', async (req, res) => {
+app.get('/fullurl', async(req, res) => {
     let url = req.query.url;
-    let r = await axios.get(url, {validateStatus: null});
-    res.json({url: r.request.res.responseUrl});
+    let r = await axios.get(url, { validateStatus: null });
+    res.json({ url: r.request.res.responseUrl });
 });
 
 //About page
-app.get('/about', async (req, res) => {
+app.get('/about', async(req, res) => {
     res.json({
         version: packageJson.version
     });
 });
 
-app.get('/updates', async (req, res) => {
+app.get('/updates', async(req, res) => {
     try {
         let response = await axios.get('https://saturn.kim/api/versions');
         //New version
@@ -554,7 +607,7 @@ app.get('/updates', async (req, res) => {
 });
 
 //Background image
-app.get('/background', async (req, res) => {
+app.get('/background', async(req, res) => {
     //Missing
     if (!settings.backgroundImage && !fs.existsSync(settings.backgroundImage)) {
         return res.status(404).end();
@@ -605,7 +658,7 @@ async function createServer(electron = false, ecb, override = {}) {
     setInterval(() => {
         sockets.forEach((s) => {
             if (!downloadManager.downloading && downloadManager.threads.length == 0)
-                return; 
+                return;
 
             s.emit('currentlyDownloading', downloadManager.threads.map(t => t.download));
         });
@@ -614,14 +667,14 @@ async function createServer(electron = false, ecb, override = {}) {
     //Integrations (lastfm, discord)
     integrations = new Integrations(settings);
     //Discord Join = Sync tracks
-    integrations.on('discordJoin', async (data) => {
-        let trackData = await deezer.callApi('deezer.pageTrack', {sng_id: data.id});
+    integrations.on('discordJoin', async(data) => {
+        let trackData = await deezer.callApi('deezer.pageTrack', { sng_id: data.id });
         let track = new Track(trackData.results.DATA);
         let out = {
-            track: track,
-            position: (Date.now() - data.ts) + data.pos
-        }
-        //Emit to sockets
+                track: track,
+                position: (Date.now() - data.ts) + data.pos
+            }
+            //Emit to sockets
         sockets.forEach((s) => {
             s.emit('playOffset', out);
         });
@@ -636,11 +689,11 @@ async function createServer(electron = false, ecb, override = {}) {
 
     //Start server
     let serverIp = override.host ? override.host : settings.serverIp;
-    let port = override.port ? override.port: settings.port;
+    let port = override.port ? override.port : settings.port;
     server.listen(port, serverIp);
     console.log(`Running on: http://${serverIp}:${port}`);
 
     return settings;
 }
 
-module.exports = {createServer};
+module.exports = { createServer };
