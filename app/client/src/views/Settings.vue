@@ -29,6 +29,33 @@
             @click:append='selectDownloadPath'
         ></v-text-field>
 
+        <!-- Crossfade -->
+        <v-slider
+            :label='$t("Crossfade (ms)")'
+            min='0'
+            max='10000'
+            thumb-label
+            step='500'
+            ticks
+            class='px-4 mt-4 mx-2'
+            v-model='$root.settings.crossfadeDuration'
+        ></v-slider>
+
+        <!-- Downloader -->
+        <v-subheader>{{$t("Downloader")}}</v-subheader>
+        <v-divider></v-divider>
+
+        <!-- Download dialog -->
+        <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.downloadDialog' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Show download dialog")}}</v-list-item-title>
+                <v-list-item-subtitle>{{$t("Always show download confirm dialog before downloading.")}}</v-list-item-subtitle>
+            </v-list-item-content>
+        </v-list-item>
+
         <!-- Download threads -->
         <v-slider
             :label='$t("Simultaneous downloads")'
@@ -41,24 +68,13 @@
             class='px-4 mx-2'
             v-model='$root.settings.downloadThreads'
         ></v-slider>
-        
-        <!-- Download dialog -->
-        <v-list-item>
-            <v-list-item-action>
-                <v-checkbox v-model='$root.settings.downloadDialog' class='pl-2'></v-checkbox>
-            </v-list-item-action>
+        <!-- Tag Settings -->
+        <v-list-item  @click='TagsDialog = true'>
+            <v-list-item-avatar>
+                <v-icon>mdi-label</v-icon>
+            </v-list-item-avatar>
             <v-list-item-content>
-                <v-list-item-title>{{$t("Show download dialog")}}</v-list-item-title>
-                <v-list-item-subtitle>{{$t("Always show download confirm dialog before downloading.")}}</v-list-item-subtitle>
-            </v-list-item-content>
-        </v-list-item>
-        <!-- Create playlist folder -->
-        <v-list-item>
-            <v-list-item-action>
-                <v-checkbox v-model='$root.settings.playlistFolder' class='pl-2'></v-checkbox>
-            </v-list-item-action>
-            <v-list-item-content>
-                <v-list-item-title>{{$t("Create folders for playlists")}}</v-list-item-title>
+                <v-list-item-title>{{$t("Tags")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
         <!-- Create artist folder -->
@@ -79,17 +95,32 @@
                 <v-list-item-title>{{$t("Create folders for albums")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
-        <!-- Download Cover -->
+        <!-- Create playlist folder -->
         <v-list-item>
             <v-list-item-action>
-                <v-checkbox v-model='$root.settings.downloadCover' class='pl-2'></v-checkbox>
+                <v-checkbox v-model='$root.settings.playlistFolder' class='pl-2'></v-checkbox>
             </v-list-item-action>
             <v-list-item-content>
-                <v-list-item-title>{{$t("Download album cover")}}</v-list-item-title>
+                <v-list-item-title>{{$t("Create folders for playlists")}}</v-list-item-title>
             </v-list-item-content>
-            <!-- Resolution -->
-            <v-select :items='artResolutions' :label='$t("Art Resolution")' v-model='$root.settings.coverResolution' style='max-width: 150px;'></v-select>
-            
+        </v-list-item>
+       <!-- Seperate albums by disk -->
+       <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.albumsbydisk' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Seperate albums by disks")}}</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+       <!-- Overwrite currently downloaded files -->
+       <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.overwritedownloadedfiles' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Overwrite already downloaded files")}}</v-list-item-title>
+            </v-list-item-content>
         </v-list-item>
         <!-- Download lyrics -->
         <v-list-item>
@@ -100,7 +131,26 @@
                 <v-list-item-title>{{$t("Download lyrics")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
+         <!-- Download Cover -->
+         <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.downloadCover' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Download cover")}}</v-list-item-title>
+            </v-list-item-content>
+            <!-- Resolution -->
+            <v-select :items='artResolutions' :label='$t("Art Resolution")' v-model='$root.settings.coverResolution' style='max-width: 150px;'></v-select>
+            
+        </v-list-item>
 
+        <!-- Artist Seperator -->
+        <v-text-field
+            class='px-4 my-2'
+            :label='$t("Artist Seperator")'
+            persistent-hint
+            v-model='$root.settings.artistSeperator'
+        ></v-text-field>
 
         <!-- Download naming -->
         <v-text-field
@@ -110,18 +160,6 @@
             v-model='$root.settings.downloadFilename'
             :hint='$t("Variables") + ": %title%, %artists%, %artist%, %feats%, %trackNumber%, %0trackNumber%, %album%, %year%, %label%, %albumArtist%, %albumArtists%"'
         ></v-text-field>
-
-        <!-- Crossfade -->
-        <v-slider
-            :label='$t("Crossfade (ms)")'
-            min='0'
-            max='10000'
-            thumb-label
-            step='500'
-            ticks
-            class='px-4 mt-4 mx-2'
-            v-model='$root.settings.crossfadeDuration'
-        ></v-slider>
 
         <!-- UI -->
         <v-subheader>{{$t("UI")}}</v-subheader>
@@ -360,6 +398,113 @@
         </v-card>
     </v-overlay>
 
+    <v-dialog v-model='TagsDialog' max-width='512'>
+    <v-card elevation='2'>
+        <v-card-title class="headline">
+        Tag Settings
+        </v-card-title>
+        <v-card-text>
+        <v-divider class="mt-3"></v-divider>
+        <v-form>
+            <v-checkbox 
+            v-model='$root.settings.cover' 
+            :label="$t('Cover')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.title' 
+            :label="$t('Song Title')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.artist' 
+            :label="$t('Song Artist')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.trackNumber' 
+            :label="$t('Track Number')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.trackTotal' 
+            :label="$t('Track Total')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.discNumber' 
+            :label="$t('Disc Number')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.albumArtist' 
+            :label="$t('Album Artist')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.genre' 
+            :label="$t('Genre')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.year' 
+            :label="$t('Year')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.date' 
+            :label="$t('Date')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.explicit' 
+            :label="$t('Explicit')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.isrc' 
+            :label="$t('IRSC')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.length' 
+            :label="$t('Song Length')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.barcode' 
+            :label="$t('Album Barcode')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.bpm' 
+            :label="$t('Song BPM')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.label' 
+            :label="$t('Label')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.lyrics' 
+            :label="$t('Lyrics')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.copyright' 
+            :label="$t('Copyright')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.composer' 
+            :label="$t('Composer')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.involvedPeople' 
+            :label="$t('Involved People')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.source' 
+            :label="$t('Source')"
+            ></v-checkbox>
+            <v-checkbox 
+            v-model='$root.settings.savePlaylistAsCompilation' 
+            :label="$t('Save Playlist As Compilation')"
+            ></v-checkbox>
+        </v-form>
+        <v-divider class="mt-3"></v-divider>
+        </v-card-text>
+        <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="TagsDialog = false">
+            {{$t("Close")}}
+        </v-btn>
+        </v-card-actions>
+    </v-card>
+    </v-dialog>
 </div>
 </template>
 
@@ -404,6 +549,7 @@ export default {
             ],
             artResolutions: [256, 512, 600, 800, 1000, 1200, 1400, 1600, 1800],
             colorPicker: false,
+            TagsDialog: false,
             
             //Lists from Deezer website
             languageList: ["me", "da", "de", "en", "us", "es", "mx", "fr", "hr", "id", "it", "hu", "ms", "nl", "no", "pl", "br", "pt", "ru", "ro", "sq", "sk", "sl", "sr", "fi", "sv", "tr", "cs", "bg", "uk", "he", "ar", "th", "cn", "ja", "ko"],

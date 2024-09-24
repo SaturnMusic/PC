@@ -25,6 +25,33 @@ class Settings {
         this.downloadDialog = true;
         this.downloadCover = true;
         this.coverResolution = 1400;
+        this.title = true;
+        this.artist = true;
+        this.album = true;
+        this.cover = true;
+        this.trackNumber = true;
+        this.trackTotal = true;
+        this.discNumber = true;
+        this.albumArtist = true;
+        this.genre = true;
+        this.year = true;
+        this.date = true;
+        this.explicit = true;
+        this.isrc = true;
+        this.length = true;
+        this.barcode = true;
+        this.bpm = true;
+        this.replayGain = true;
+        this.label = true;
+        this.lyrics = true;
+        this.copyright = true;
+        this.composer = true;
+        this.involvedPeople = true;
+        this.source = false;
+        this.savePlaylistAsCompilation = false;
+        this.artistSeperator = ', ';
+        this.overwritedownloadedfiles = false;
+        this.albumsbydisk = false;
 
         this.logListen = false;
         this.lastFM = null;
@@ -74,22 +101,22 @@ class Settings {
 
     //Get settings.json path
     static getPath() {
-        return path.join(Settings.getDir(), 'settings.json');  
-    }
-    //Get path to playback.json
+            return path.join(Settings.getDir(), 'settings.json');
+        }
+        //Get path to playback.json
     static getPlaybackInfoPath() {
-        return path.join(Settings.getDir(), 'playback.json');
-    }
-    //Get path to downloads database
+            return path.join(Settings.getDir(), 'playback.json');
+        }
+        //Get path to downloads database
     static getDownloadsDB() {
-        //Delete old DB if exists
-        let oldPath = path.join(Settings.getDir(), 'downloads.db');
-        if (fs.existsSync(oldPath))
-            fs.unlink(oldPath, () => {});
+            //Delete old DB if exists
+            let oldPath = path.join(Settings.getDir(), 'downloads.db');
+            if (fs.existsSync(oldPath))
+                fs.unlink(oldPath, () => {});
 
-        return path.join(Settings.getDir(), 'downloads2.db');
-    }
-    //Get path to temporary / unfinished downlaods
+            return path.join(Settings.getDir(), 'downloads2.db');
+        }
+        //Get path to temporary / unfinished downlaods
     static getTempDownloads() {
         return path.join(Settings.getDir(), 'downloadsTemp');
     }
@@ -104,7 +131,7 @@ class Settings {
         let e = this.electron;
         //Create dir if doesn't exist
         try {
-            fs.mkdirSync(Settings.getDir(), {recursive: true});
+            fs.mkdirSync(Settings.getDir(), { recursive: true });
         } catch (_) {}
 
         //Load settings from file
@@ -127,7 +154,7 @@ class Settings {
     async save() {
         //Create dir if doesn't exist
         try {
-            await fs.promises.mkdir(Settings.getDir(), {recursive: true});
+            await fs.promises.mkdir(Settings.getDir(), { recursive: true });
         } catch (_) {}
 
         await fs.promises.writeFile(Settings.getPath(), JSON.stringify(this, null, 2), 'utf-8');
@@ -135,4 +162,4 @@ class Settings {
 
 }
 
-module.exports = {Settings};
+module.exports = { Settings };
