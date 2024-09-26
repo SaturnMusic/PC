@@ -68,12 +68,11 @@
                     if (res.data && res.data.track && res.data.track.lyrics) {
                         const track = res.data.track;
                         this.lyrics = {
-                            lyrics: [],
-                            text: track.lyrics.text.split('\r\n').filter(line => line.trim() !== ''),
-                            writers: track.lyrics.writers,
-                            copyright: track.lyrics.copyright
-                        };
-    
+                        lyrics: [],
+                        text: track.lyrics.text.replace(/\r\n|\r|\n\n/g, '\n').split('\n').filter(line => line.trim() !== ''),
+                        writers: track.lyrics.writers,
+                        copyright: track.lyrics.copyright
+                    };
                         // Handle synchronized lines if they exist
                         if (track.lyrics.synchronizedLines) {
                             this.lyrics.lyrics = track.lyrics.synchronizedLines.map((line) => ({
