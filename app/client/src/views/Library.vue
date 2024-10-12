@@ -4,6 +4,9 @@
         <v-btn class='ml-2 mb-1' icon @click='shuffle' v-if='$rooms.allowControls()'>
             <v-icon>mdi-shuffle</v-icon>
         </v-btn>
+        <v-btn class='ml-2 mb-1' icon @click='download'>
+            <v-icon>mdi-download</v-icon>
+        </v-btn>
     </h1>
 
     <v-tabs v-model='tab'>
@@ -50,6 +53,8 @@
             <LibraryHistory></LibraryHistory>
         </v-tab-item>
     </v-tabs-items>
+    
+    <DownloadDialog :playlistName='Library' :tracks='this.trcks' v-if='downloadDialog' @close='downloadDialog = false'></DownloadDialog>
 
 </div>
 </template>
@@ -60,11 +65,12 @@ import LibraryAlbums from '@/components/LibraryAlbums.vue';
 import LibraryArtists from '@/components/LibraryArtists.vue';
 import LibraryPlaylists from '@/components/LibraryPlaylists.vue';
 import LibraryHistory from '@/components/LibraryHistory.vue';
+import DownloadDialog from '@/components/DownloadDialog.vue';
 
 export default {
     name: 'Library',
     components: {
-        LibraryTracks, LibraryAlbums, LibraryArtists, LibraryPlaylists, LibraryHistory
+        LibraryTracks, LibraryAlbums, LibraryArtists, DownloadDialog, LibraryPlaylists, LibraryHistory
     },
         props: {
         routeTab: {
@@ -76,10 +82,18 @@ export default {
         return {
             tab: null,
             tabs: ['tracks', 'albums', 'artists', 'playlists'],
-
+            downloadDialog: false,
+            trcks: [],
         }
     },
     methods: {
+        async download() {
+            let id = this.$root.profile.favoritesPlaylist;
+            this.$axios.get(`/playlist/${id}/?full=idk`).then((res) => {
+                this.trcks.push(...res.data.tracks);
+            });
+            this.downloadDialog = true;
+        },
         async shuffle() {
             //Rooms
             if (this.$rooms.room) return;
