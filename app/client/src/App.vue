@@ -543,6 +543,9 @@ export default {
       this.fluidContainer = window.innerWidth < 1300;
     });
 
+    // https://github.com/SaturnMusic/PC/issues/26
+    window.addEventListener("unhandledrejection", (event) => { console.log("Unhandled promise rejection!\n", event.promise, event.reason); this.$root.skipNext(); this.$root.skip(-1) });
+
     //Check for update
     this.checkUpdate();
   },
