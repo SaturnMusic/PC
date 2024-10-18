@@ -6,7 +6,7 @@ import axios from 'axios';
 import VueEsc from 'vue-esc';
 import i18n from './js/i18n';
 import { io } from "socket.io-client";
-import {Rooms} from './js/rooms';
+import { Rooms } from './js/rooms';
 
 //Globals
 let ipcRenderer;
@@ -33,9 +33,9 @@ Vue.prototype.$duration = (ms) => {
 //Abbrevation 
 Vue.prototype.$abbreviation = (n) => {
     if (!n || n == 0) return '0';
-    var base = Math.floor(Math.log(Math.abs(n))/Math.log(1000));
-    var suffix = 'KMB'[base-1];
-    return suffix ? String(n/Math.pow(1000,base)).substring(0,3)+suffix : ''+n;
+    var base = Math.floor(Math.log(Math.abs(n)) / Math.log(1000));
+    var suffix = 'KMB' [base - 1];
+    return suffix ? String(n / Math.pow(1000, base)).substring(0, 3) + suffix : '' + n;
 }
 
 //Add thousands commas
@@ -83,6 +83,7 @@ new Vue({
         playbackInfo: {},
         position: 0,
         muted: false,
+        savedindex: 0,
         //Gapless playback meta
         gapless: {
             promise: null,
@@ -111,6 +112,12 @@ new Vue({
 
         //Used to prevent double listen logging
         logListenId: null,
+
+        //flow mgmt
+        lastid: null,
+
+        //shuffle mgmt
+        lastidshfle: null,
 
         globalSnackbar: null
     },
@@ -191,11 +198,11 @@ new Vue({
         shuffle() {
             if (!this.shuffled) {
                 //Save positions
-                for (let i=0; i<this.queue.data.length; i++) 
-                    this.queue.data[i]._position = i+1;
+                for (let i = 0; i < this.queue.data.length; i++)
+                    this.queue.data[i]._position = i + 1;
 
                 //Shuffle
-                for (let i=this.queue.data.length - 1; i > 0; i--) {
+                for (let i = this.queue.data.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [this.queue.data[i], this.queue.data[j]] = [this.queue.data[j], this.queue.data[i]];
                 }
@@ -234,7 +241,7 @@ new Vue({
             let autoplay = (this.state == 2);
             if (this.audio) this.audio.pause();
             if (this.audio) this.audio.currentTime = 0;
-            
+
             //Load track meta
             let playbackInfo = await this.loadPlaybackInfo(track.streamUrl, track.duration);
             if (!playbackInfo) {
@@ -263,19 +270,18 @@ new Vue({
             if (autoplay) this.play();
             //MediaSession
             this.updateMediaSession();
-            
-            //Loads more tracks if end of list, if not in room
-            if (!this.$rooms.room)
-                this.loadSTL();
         },
         //Configure html audio element
         configureAudio() {
             //Listen position updates
-            this.audio.addEventListener('timeupdate', async () => {
+            this.audio.addEventListener('timeupdate', async() => {
                 this.position = this.audio.currentTime * 1000;
 
                 //Rooms
                 if (this.$rooms.room) return;
+
+                this.loadSTL();
+                this.loadShuffle();
 
                 //Gapless playback
                 if (this.position >= (this.duration() - (this.settings.crossfadeDuration + 7500)) && this.state == 2) {
@@ -301,7 +307,7 @@ new Vue({
 
                     this.audio.volume = 0.0;
                     let volumeStep = currentVolume / (this.settings.crossfadeDuration / 50);
-                    for (let i=0; i<(this.settings.crossfadeDuration / 50); i++) {
+                    for (let i = 0; i < (this.settings.crossfadeDuration / 50); i++) {
                         if ((oldAudio.volume - volumeStep) > 0)
                             oldAudio.volume -= volumeStep;
                         if ((this.audio.volume + volumeStep) >= 1.0 || (this.audio.volume + volumeStep) >= currentVolume)
@@ -313,7 +319,7 @@ new Vue({
                     this.audio.voume = currentVolume;
 
                     oldAudio.pause();
-                    
+
                     this.resetGapless();
                     this.updateState();
 
@@ -329,14 +335,13 @@ new Vue({
             this.audio.muted = this.muted;
             //Set volume
             this.audio.volume = this.volume * this.volume;
-            
-            this.audio.addEventListener('ended', async () => {
+
+            this.audio.addEventListener('ended', async() => {
                 //Track end
                 if (this.$rooms.room) {
                     this.$rooms.trackEnd();
                     return;
                 }
-
 
                 if (this.gapless.crossfade) return;
 
@@ -355,7 +360,7 @@ new Vue({
                 }
 
                 //End of queue
-                if (this.queue.index+1 == this.queue.data.length) {
+                if (this.queue.index + 1 == this.queue.data.length) {
                     this.state = 1;
                     return;
                 }
@@ -375,8 +380,8 @@ new Vue({
                 artist: this.track.artistString,
                 album: this.track.album.title,
                 artwork: [
-                    {src: this.getImageUrl(this.track.albumArt, 256), sizes: '256x256', type: 'image/jpeg'},
-                    {src: this.getImageUrl(this.track.albumArt, 512), sizes: '512x512', type: 'image/jpeg'}
+                    { src: this.getImageUrl(this.track.albumArt, 256), sizes: '256x256', type: 'image/jpeg' },
+                    { src: this.getImageUrl(this.track.albumArt, 512), sizes: '512x512', type: 'image/jpeg' }
                 ]
             });
             //Controls
@@ -400,12 +405,12 @@ new Vue({
             } catch (_) {
                 return null;
             }
-            
+
             let info = res.data;
             //Generate qualityString
             switch (info.quality) {
                 case 9:
-                    info.qualityString = 'FLAC ' + Math.round((info.size*8) / duration) + 'kbps';
+                    info.qualityString = 'FLAC ' + Math.round((info.size * 8) / duration) + 'kbps';
                     break;
                 case 3:
                     info.qualityString = 'MP3 320kbps';
@@ -419,7 +424,7 @@ new Vue({
 
         //Reset gapless playback meta
         resetGapless() {
-            this.gapless = {crossfade: false,promise: null,audio: null,info: null,track: null,index:null};
+            this.gapless = { crossfade: false, promise: null, audio: null, info: null, track: null, index: null };
         },
         //Load next track for gapless
         async loadGapless() {
@@ -431,16 +436,16 @@ new Vue({
                 this.gapless.index = 0;
             } else {
                 //Last song
-                if (this.queue.index+1 >= this.queue.data.length) return;
+                if (this.queue.index + 1 >= this.queue.data.length) return;
                 //Next song
                 this.gapless.track = this.queue.data[this.queue.index + 1];
                 this.gapless.index = this.queue.index + 1;
             }
-            
+
             //Save promise
             let resolve;
-            this.gapless.promise = new Promise((res) => {resolve = res});
-            
+            this.gapless.promise = new Promise((res) => { resolve = res });
+
             //Load meta
             let info = await this.loadPlaybackInfo(this.gapless.track.streamUrl, this.gapless.track.duration);
             if (!info) {
@@ -461,8 +466,22 @@ new Vue({
         },
         //Load more SmartTrackList tracks
         async loadSTL() {
-            if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'smarttracklist' && this.queue.source.type && this.queue.source.type == 'flow') {
+            if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'dynamic_page_flow_config' && this.queue.source.type && this.queue.source.type == 'flow') {
+                if (this.lastid == this.track.id) return;
+                this.lastid = this.track.id;
                 let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.data);
+                if (data.data) {
+                    this.replaceQueue(this.queue.data.concat(data.data));
+                }
+                this.savePlaybackInfo();
+            }
+        },
+        //Load more Shuffle tracks
+        async loadShuffle() {
+            if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'shuffled_collection') {
+                if (this.lastidshfle == this.track.id) return;
+                this.lastidshfle = this.track.id;
+                let data = await this.$axios.get('/shuffle');
                 if (data.data) {
                     this.replaceQueue(this.queue.data.concat(data.data));
                 }
@@ -534,7 +553,7 @@ new Vue({
                 position: this.position,
                 duration: this.duration(),
                 state: this.state,
-                track: this.track 
+                track: this.track
             });
 
             //Update in electron 
@@ -547,9 +566,10 @@ new Vue({
         },
         //For LGBT/Gayming mode
         primaryColorRainbow() {
-            const colors = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', 
+            const colors = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4',
                 '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',
-                '#795548', '#607D8B', '#9E9E9E'];
+                '#795548', '#607D8B', '#9E9E9E'
+            ];
             let index = 0;
             setInterval(() => {
                 this.$vuetify.theme.themes.dark.primary = colors[index];
@@ -585,8 +605,8 @@ new Vue({
         const lgbt = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Gay_Pride_Flag.svg/1280px-Gay_Pride_Flag.svg.png';
         if (this.settings.backgroundImage == lgbt)
             this.settings.backgroundImage = null;
-        
-            
+
+
         i18n.locale = this.settings.language;
         this.volume = this.settings.volume;
 
@@ -604,11 +624,11 @@ new Vue({
 
         //Check for electron (src: npm isElectron)
         this.settings.electron = ((
-            typeof window !== 'undefined' && 
-            typeof window.process === 'object' && 
+            typeof window !== 'undefined' &&
+            typeof window.process === 'object' &&
             window.process.type === 'renderer') || (
-                typeof navigator === 'object' && typeof navigator.userAgent === 'string' && 
-                navigator.userAgent.indexOf('Electron') >= 0
+            typeof navigator === 'object' && typeof navigator.userAgent === 'string' &&
+            navigator.userAgent.indexOf('Electron') >= 0
         ));
         if (this.settings.electron)
             ipcRenderer = window.require('electron').ipcRenderer;
@@ -616,7 +636,7 @@ new Vue({
         //Setup electron callbacks
         if (this.settings.electron) {
             //Save files on exit
-            ipcRenderer.on('onExit', async () => {
+            ipcRenderer.on('onExit', async() => {
                 this.pause();
                 await this.saveSettings();
                 await this.savePlaybackInfo();
@@ -658,7 +678,7 @@ new Vue({
             this.downloads.threads = data;
         });
         //Play at offset (for integrations)
-        this.$io.on('playOffset', async (data) => {
+        this.$io.on('playOffset', async(data) => {
             this.queue.data.splice(this.queue.index + 1, 0, data.track);
             await this.skip(1);
             this.seek(data.position);
@@ -738,5 +758,5 @@ new Vue({
     router,
     vuetify,
     i18n,
-    render: function (h) { return h(App) }
+    render: function(h) { return h(App) }
 }).$mount('#app');

@@ -394,8 +394,9 @@ app.get('/smarttracklist/:type?/:id', async(req, res) => {
     let type = req.params.type ? req.params.type : undefined;
 
     //Flow not normal STL
-    if (id == 'flow' || type == 'flow') { // Not so clean check to know if it's flow
+    if (type == 'flow') {
         let data = await deezer.callApi('radio.getUserRadio', {
+            config_id: id,
             user_id: deezer.userId
         });
         let tracks = data.results.data.map((t) => new Track(t));
