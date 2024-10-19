@@ -1,11 +1,11 @@
-const {app, BrowserWindow, ipcMain, Tray, Menu, session, dialog, shell, nativeTheme} = require('electron');
-const {createServer} = require('./src/server');
+const { app, BrowserWindow, ipcMain, Tray, Menu, session, dialog, shell, nativeTheme } = require('electron');
+const { createServer } = require('./src/server');
 const path = require('path');
 const arg = require('arg');
 const { exit, platform } = require('process');
 const packageJson = require('./package.json');
 const chalk = require('chalk');
-const {Settings} = require('./src/settings');
+const { Settings } = require('./src/settings');
 const fs = require('fs');
 
 let win;
@@ -30,7 +30,7 @@ const args = arg({
     '-H': '--host',
     '-h': '--help',
     '-p': '--port'
-}, {argv: process.argv.slice(1)});
+}, { argv: process.argv.slice(1) });
 
 executeCli();
 
@@ -329,10 +329,11 @@ ipcMain.on('selectDownloadPath', async (event) => {
 
 //Login using browser
 ipcMain.on('browserLogin', async (event) => {
-    //Initial clean
     session.defaultSession.clearStorageData();
 
-    let lwin = new BrowserWindow({
+    const mobileUserAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1';
+
+    const lwin = new BrowserWindow({
         width: 800,
         height: 600,
         icon: assetPath('icon.png'),
@@ -340,26 +341,52 @@ ipcMain.on('browserLogin', async (event) => {
         resizable: true,
         autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: false
-        }
+            nodeIntegration: false,
+            contextIsolation: true,
+        },
     });
+
+    lwin.webContents.setUserAgent(mobileUserAgent);
     lwin.loadURL('https://deezer.com/login');
 
-    let arl = await new Promise((res) => {
-        lwin.webContents.on('did-navigate', async () => {
-            let arlCookie = await session.defaultSession.cookies.get({
-                name: "arl"
-            });
-            if (arlCookie.length > 0) {
-                res(arlCookie[0].value);
+    const arl = await new Promise((resolve) => {
+        lwin.webContents.on('did-navigate', async (event, url) => {
+            console.log('Navigated to:', url); // Log the URL for debugging
+            if (!url.includes('/login') && !url.includes('/register')) {
+                console.log('excuted');
+                lwin.webContents.executeJavaScript('window.location.href = "https://deezer.com/open_app"');
+            }
+
+            if (url.startsWith('https://preview.page.link')) {
+                console.log('page.link');
+                // Extract the 'link' parameter from URL
+                const parsedUrl = new URL(url);
+                const deezerLink = parsedUrl.searchParams.get('link');
+                console.log('deezerLink:', deezerLink);
+
+                if (deezerLink) {
+                    // Parse the deezerLink for the 'arl' parameter
+                    const deezerParsedUrl = new URL(deezerLink);
+                    const arlParam = deezerParsedUrl.searchParams.get('arl');
+                    console.log('arlParam:', arlParam);
+                    if (arlParam) {
+                        resolve(arlParam); // Resolve the ARL
+                    }
+                }
+                lwin.close();
+            } else if (url.includes('www.deezer.com')) {
+                console.log('deezer.com');
+                let arlCookie = await session.defaultSession.cookies.get({
+                    name: "arl"
+                });
+                if (arlCookie.length > 0) {
+                    res(arlCookie[0].value);
+                }
+                lwin.close();
             }
         });
     });
 
-    lwin.close();
-    lwin = null;
-    //Delete deezer junk
     session.defaultSession.clearStorageData();
-    
     event.reply('browserLogin', arl);
 });
