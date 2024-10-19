@@ -166,6 +166,7 @@ new Vue({
         //Replace queue, has to make clone of data to not keep references
         replaceQueue(newQueue) {
             this.queue.data = Object.assign([], newQueue);
+            this.shuffled = false;
         },
         //Add track to queue at index
         addTrackIndex(track, index) {
@@ -469,7 +470,7 @@ new Vue({
             if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'dynamic_page_flow_config' && this.queue.source.type && this.queue.source.type == 'flow') {
                 if (this.lastid == this.track.id) return;
                 this.lastid = this.track.id;
-                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.data);
+                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.type);
                 if (data.data) {
                     this.replaceQueue(this.queue.data.concat(data.data));
                 }

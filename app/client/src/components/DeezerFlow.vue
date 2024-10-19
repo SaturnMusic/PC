@@ -43,7 +43,7 @@ export default {
                 text: this.stl.title,
                 source: 'dynamic_page_flow_config',
                 data: this.stl.id,
-                type: this.stl.id,
+                type: 'flow',
             };
             this.$root.replaceQueue(res.data);
             this.$root.playIndex(0);
