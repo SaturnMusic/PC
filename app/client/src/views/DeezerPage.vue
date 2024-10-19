@@ -17,7 +17,7 @@
             <!-- Row layout -->
             <div class='d-flex' style='overflow-x: auto; overflow-y: hidden;' v-if='section.layout == "row"'>
                 <div v-for='(item, index) in section.items' :key='"item"+index' class='mr-4 my-2'>
-                    <PlaylistTile v-if='item.type == "playlist"' :playlist='item.data' card class='mb-4'></PlaylistTile>
+                    <PlaylistTile v-if='item.type == "playlist"' :playlist='item.data' card cardTitle cardTrackNumber class='mb-4'></PlaylistTile>
                     <ArtistTile v-if='item.type == "artist"' :artist='item.data' card></ArtistTile>
                     <DeezerChannel v-if='item.type == "channel"' :channel='item.data' class='mb-2'></DeezerChannel>
                     <AlbumTile v-if='item.type == "album"' :album='item.data' card></AlbumTile>

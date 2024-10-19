@@ -47,7 +47,7 @@
         </v-card>
 
         <v-lazy max-height="220" v-for='playlist in filtered' :key='playlist.id' class='ma-2'>
-            <PlaylistTile :playlist='playlist' @remove='removed(playlist.id)' card cardTitle></PlaylistTile>
+            <PlaylistTile :playlist='playlist' @remove='removed(playlist.id)' card cardTitle cardTrackNumber></PlaylistTile>
         </v-lazy>
     </div>
 

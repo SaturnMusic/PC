@@ -82,7 +82,7 @@
     </v-list-item>
 
     <!-- Card -->
-    <v-card v-if='card' max-width='175px' max-height='220px' @click='click' color='transparent' elevation='0'>
+    <v-card v-if='card' max-width='175px' max-height='230px' @click='click' color='transparent' elevation='0'>
         <v-hover v-slot:default='{hover}'>
             <div>
 
@@ -96,6 +96,7 @@
                 </v-overlay>
 
                 <div v-if='cardTitle' class='px-2 pt-2 pb-1 text-subtitle-2 text-center text-truncate'>{{playlist.title}}</div>
+                <div v-if='cardTrackNumber' class='pb-1 px-2 text-caption text-center text-truncate'>{{playlist.trackCount}} tracks</div>
 
             </div>
         </v-hover>
@@ -128,6 +129,10 @@ export default {
             default: false
         },
         cardTitle: {
+            type: Boolean,
+            default: false
+        },
+        cardTrackNumber: {
             type: Boolean,
             default: false
         }
