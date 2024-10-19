@@ -35,8 +35,8 @@
       permanent
       fixed
       app
-      :mini-variant='!this.$root.settings.sidebarOpen'
-      :expand-on-hover='!this.$root.settings.sidebarOpen'
+      :mini-variant="this.$root.settings.sidebarClosed || !this.$root.settings.sidebarOpen"
+      :expand-on-hover="!this.$root.settings.sidebarClosed && !this.$root.settings.sidebarOpen"
     ><v-list nav dense>
 
         <!-- Profile -->

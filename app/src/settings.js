@@ -71,6 +71,7 @@ class Settings {
         this.contentLanguage = 'en';
         this.contentCountry = 'US';
         this.sidebarOpen = false;
+        this.sidebarClosed = false;
         this.nativeTopBar = false;
         this.perfmode = false;
 

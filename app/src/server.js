@@ -287,6 +287,12 @@ app.put('/library/:type', async(req, res) => {
     res.sendStatus(200);
 });
 
+//PUT dislike track
+app.put('/dislike/:trackid', async(req, res) => {
+    let trackid = req.params.trackid;
+    await deezer.callApi('favorite_dislike.add', { SNG_ID: trackid, TYPE: 'song' });
+    res.sendStatus(200);
+});
 
 //Get streaming metadata, quality fallback
 app.get('/streaminfo/:info', async(req, res) => {

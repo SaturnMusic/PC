@@ -214,6 +214,16 @@
                 <v-list-item-subtitle>{{$t("WARNING: Might require reload to work properly!")}}</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
+        <!-- Keep sidebar closed -->
+        <v-list-item>
+            <v-list-item-action>
+                <v-checkbox v-model='$root.settings.sidebarClosed' class='pl-2'></v-checkbox>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Keep sidebar closed")}}</v-list-item-title>
+                <v-list-item-subtitle>{{$t("WARNING: Might require reload to work properly!")}}</v-list-item-subtitle>
+            </v-list-item-content>
+        </v-list-item>
         <!-- Native top bar -->
         <v-list-item>
             <v-list-item-action>

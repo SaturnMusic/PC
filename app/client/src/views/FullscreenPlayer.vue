@@ -92,6 +92,10 @@
                         <v-icon v-if='inLibrary'>mdi-heart-remove</v-icon>
                     </v-btn>
 
+                    <v-btn icon @click='dislike'>
+                        <v-icon>mdi-emoticon-sad</v-icon>
+                    </v-btn>
+
                     <v-btn icon @click='playlistPopup = true'>
                         <v-icon>mdi-playlist-plus</v-icon>
                     </v-btn>
@@ -320,6 +324,12 @@ export default {
             this.inLibrary = true;
 
             this.$root.globalSnackbar = this.$t('Added to library!');
+        },
+        //Dislike track
+        async dislike() {
+            await this.$axios.put('/dislike/' + this.$root.track.id)
+            this.$root.skipNext();
+            this.$root.globalSnackbar = this.$t('Track disliked!');
         },
         //Download current track
         async download() {
