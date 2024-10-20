@@ -327,11 +327,6 @@ new Vue({
                     //Save
                     await this.savePlaybackInfo();
                 }
-
-                //Scrobble/LogListen
-                if (this.position >= this.duration() * 0.75) {
-                    this.logListen();
-                }
             });
             this.audio.muted = this.muted;
             //Set volume
@@ -343,6 +338,9 @@ new Vue({
                     this.$rooms.trackEnd();
                     return;
                 }
+
+                //Scrobble/LogListen
+                this.logListen();
 
                 if (this.gapless.crossfade) return;
 
