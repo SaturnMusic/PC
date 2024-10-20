@@ -11,7 +11,7 @@
       height='28'>
 
       <v-spacer></v-spacer>
-      <span style='position: absolute; left: 45%'>Saturn <span v-if='version'>v{{version}}</span></span>
+      <span style='position: absolute; left: 45%'>{{ appName }} <span v-if='version'>v{{version}}</span></span>
       <v-spacer></v-spacer>
       <v-icon class='topbarbutton mx-2' @click='minimize'>mdi-window-minimize</v-icon>
       <v-icon class='topbarbutton mx-2' @click='maximize'>mdi-window-maximize</v-icon>
@@ -216,7 +216,7 @@
 
         <!-- No track loaded -->
         <v-col class='col-5 d-none d-sm-flex' v-if='!this.$root.track'>
-          <h3 class='pl-4'>Saturn</h3>
+          <h3 class='pl-4'>{{ appName }}</h3>
         </v-col>
 
         <!-- Track Info -->
@@ -479,6 +479,10 @@ export default {
     }
   },
   computed: {
+    appName () {
+      if (process.env.NODE_ENV == 'canary') return 'Saturn Canary';
+      return 'Saturn';
+    },
     qualityText() {
       return `${this.$root.playbackInfo.qualityString}`;
     },

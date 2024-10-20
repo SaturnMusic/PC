@@ -19,7 +19,7 @@
 
     <!-- Login form -->
     <div v-if='showForm' class='text-center'>
-        <v-img src='banner.png' contain max-width='400px' class='py-8'></v-img>
+        <v-img id:banner contain max-width='400px' class='py-8'></v-img>
 
         <h3>{{$t("Please login using your Deezer account:")}}</h3>
         <v-btn large class='my-2 mb-4 primary' @click='browserLogin'>

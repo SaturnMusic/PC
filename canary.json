@@ -1,0 +1,82 @@
+{
+    "appId": "dev.arachnid.saturn.canary",
+    "productName": "Saturn Canary",
+    "icon": "build/icon-canary.ico",
+    "extraResources": [{
+        "from": "app/assets/**",
+        "to": "assets/"
+    }],
+    "files": [
+        "**/*",
+        "!app/client/",
+        "app/client/dist/**"
+    ],
+    "win": {
+        "target": [
+            "portable",
+            "nsis"
+        ],
+        "icon": "build/icon-canary.ico",
+        "asarUnpack": [
+            "app/node_modules/nodeezcryptor/**"
+        ]
+    },
+    "nsis": {
+        "oneClick": false,
+        "perMachine": false,
+        "allowElevation": false,
+        "allowToChangeInstallationDirectory": true,
+        "installerIcon": "build/icon-canary.ico",
+        "uninstallerIcon": "build/icon-canary.ico"
+    },
+    "linux": {
+        "appId": "s.s.saturn.canary",
+        "category": "AudioVideo;Network;Audio;FileTransfer;Player",
+        "description": "Electron-based Deezer client - Canary",
+        "desktop": {
+            "Version": "1.1",
+            "Type": "Application",
+            "Name": "Saturn Canary",
+            "GenericName": "Electron-based Deezer client - Canary",
+            "Comment": "Desktop application for the Deezer audio streaming service",
+            "Icon": "icon-canary",
+            "Categories": "AudioVideo;Network;Audio;FileTransfer;Player;",
+            "MimeType": "application/http;",
+            "Keywords": "audio;download;flac;lyrics;mp3;music;spotify;stream;",
+            "StartupNotify": "true",
+            "StartupWMClass": "saturn",
+            "DBusActivatable": "false",
+            "Terminal": "false",
+            "NoDisplay": "false",
+            "Hidden": "false"
+        },
+        "executableName": "saturn-canary",
+        "icon": "build/canary-iconset",
+        "maintainer": "github.com/SaturnMusic",
+        "mimeTypes": [
+            "application/http"
+        ],
+        "synopsis": "Electron-based Deezer client - Canary",
+        "target": [
+            "AppImage",
+            "deb",
+            "tar.xz"
+        ]
+    },
+    "appImage": {
+        "desktop": {
+            "X-AppImage-Name": "Saturn Canary"
+        }
+    },
+    "deb": {
+        "packageCategory": "sound",
+        "priority": "optional",
+        "depends": [
+            "libflac8",
+            "libnotify4",
+            "libnss3",
+            "libssl1.1 | libssl1.0.0",
+            "libxtst6"
+        ]
+    }
+}

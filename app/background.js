@@ -118,8 +118,8 @@ async function createWindow() {
         resizable: true,
         autoHideMenuBar: true,
         frame: settings.nativeTopBar,
-        icon: assetPath("icon.png"),
-        title: 'Saturn',
+        icon: process.env.NODE_ENV === 'canary' ? assetPath("icon-canary.png") : assetPath("icon.png"),
+        title: process.env.APP_TITLE || 'Saturn',
         webPreferences: {
             enableRemoteModule: true,
             nodeIntegration: true,
@@ -336,7 +336,7 @@ ipcMain.on('browserLogin', async (event) => {
     const lwin = new BrowserWindow({
         width: 800,
         height: 600,
-        icon: assetPath('icon.png'),
+        icon: process.env.NODE_ENV === 'canary' ? assetPath("icon-canary.png") : assetPath("icon.png"),
         title: "Deezer Login",
         resizable: true,
         autoHideMenuBar: true,
@@ -351,26 +351,18 @@ ipcMain.on('browserLogin', async (event) => {
 
     const arl = await new Promise((resolve) => {
         lwin.webContents.on('did-navigate', async (event, url) => {
-            console.log('Navigated to:', url); // Log the URL for debugging
             if (!url.includes('/login') && !url.includes('/register')) {
-                console.log('excuted');
                 lwin.webContents.executeJavaScript('window.location.href = "https://deezer.com/open_app"');
             }
 
             if (url.startsWith('https://preview.page.link')) {
-                console.log('page.link');
-                // Extract the 'link' parameter from URL
                 const parsedUrl = new URL(url);
                 const deezerLink = parsedUrl.searchParams.get('link');
-                console.log('deezerLink:', deezerLink);
-
                 if (deezerLink) {
-                    // Parse the deezerLink for the 'arl' parameter
                     const deezerParsedUrl = new URL(deezerLink);
                     const arlParam = deezerParsedUrl.searchParams.get('arl');
-                    console.log('arlParam:', arlParam);
                     if (arlParam) {
-                        resolve(arlParam); // Resolve the ARL
+                        resolve(arlParam);
                     }
                 }
                 lwin.close();

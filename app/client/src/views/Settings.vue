@@ -231,7 +231,7 @@
             </v-list-item-action>
             <v-list-item-content>
                 <v-list-item-title>{{$t("Native top bar")}}</v-list-item-title>
-                <v-list-item-subtitle>{{$t("Requires restart of Freezer!")}}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{$t("Requires restart of Saturn!")}}</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
         <!-- Performance mode -->

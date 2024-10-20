@@ -1,7 +1,7 @@
 <template>
 <div>
 
-    <v-img src='@/../public/banner.png' max-width='400px' class='mx-auto'></v-img>
+    <v-img :src='banner' max-width='400px' class='mx-auto'></v-img>
     <div v-if='data' class='text-center text-h5 font-weight-bold'>
         v{{data.version}}
     </div>
@@ -64,13 +64,13 @@
         <v-list-item>
             <v-list-item-content>
                 <v-list-item-title class='font-weight-bold'>exttex, Xandar Null, Francesco, Tobs</v-list-item-title>
-                <v-list-item-subtitle>Original Freezer App</v-list-item-subtitle>
+                <v-list-item-subtitle>Original Saturn App</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
     </v-list>
 
     <div class='text-center text-h5 font-weight-bold my-4'>
-        Translations provided by Crowdin supporters of the original Freezer app
+        Translations provided by Crowdin supporters of the original Saturn app
     </div>
 
     <v-dialog v-model='bw86Dialog' max-width='512'>
@@ -140,12 +140,18 @@ export default {
     async mounted() {
         //Check for updates
         try {
-            let res = await this.$axios.get('/updates');
+            let res = await this.$axios.get('{{updateUrl}}');
             if (res.data) {
                 this.update = res.data;
             }
         } catch (_) {
             //No update / failed to check, ignore
+        }
+    },
+    computed: {
+        banner() {
+            if (process.env.NODE_ENV == 'canary') return 'banner-canary.png';
+            return 'banner.png';
         }
     }
 }
