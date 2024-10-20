@@ -1,4 +1,6 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/bqx9f29tp574oq4w?svg=true)](https://ci.appveyor.com/project/Ascensionist/pc-huhqc) 
+[![Build status](https://ci.appveyor.com/api/projects/status/bqx9f29tp574oq4w?svg=true)](https://ci.appveyor.com/project/Ascensionist/pc-huhqc) [![Node.js CI](https://github.com/SaturnMusic/PC/actions/workflows/main.yml/badge.svg)](https://github.com/SaturnMusic/PC/actions/workflows/main.yml)
+<sup> | [linux dl](https://ci.appveyor.com/project/Ascensionist/pc-huhqc/build/artifacts) | [mac dl](https://ci.appveyor.com/project/Ascensionist/pc/build/artifacts) | [win dl](https://github.com/SaturnMusic/PC/actions/workflows/main.yml)</sup>
+
 # Saturn
 ## Freezer Reborn
 ### Your go-to **ToS Compliant** Custom Deezer Client
