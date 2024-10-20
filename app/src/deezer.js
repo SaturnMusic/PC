@@ -466,7 +466,7 @@ class DeezerAPI {
     async qualityFallback(info, quality = 3) {
         try {
             let urlGen = await this.generateUrl(info.trackId, info.md5origin, info.mediaVersion, quality);
-            let res = await axios.head(urlGen.url).then(logger.warn(parseInt(quality.toString(), 10)));
+            let res = await axios.head(urlGen.url);
             if (res.status > 400) throw new Error(`Status code: ${res.status}`);
             //Make sure it's an int
             info.quality = parseInt(quality.toString(), 10);

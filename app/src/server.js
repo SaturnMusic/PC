@@ -558,7 +558,7 @@ app.post('/log/:id/:s', async(req, res) => {
                 media: { id: req.body.id, type: 'song', format: 'MP3_128' }
             }
         });
-        logger.warn("log.listen: ", a)
+        // logger.warn("log.listen: ", a)
     }
     res.status(200).end();
 });
@@ -600,11 +600,15 @@ app.get('/about', async(req, res) => {
 
 app.get('/updates', async(req, res) => {
     try {
-        const url = process.env.NODE_ENV === 'canary' ? `https://saturn.kim/deadpage` : `https://raw.githubusercontent.com/Ascensionist/revisions/refs/heads/main/versions.json`;
+        const url = `https://raw.githubusercontent.com/Ascensionist/revisions/refs/heads/main/versions.json`;
         let response = await axios.get(url);
         //New version
         if (compareVersions(response.data.pc.latest, packageJson.version) >= 1) {
             res.send(response.data.pc.versions[0]);
+            return;
+        }
+        if (process.env.NODE_ENV === 'canary') {
+            res.status(404).end();
             return;
         }
         res.status(404).end();
