@@ -548,7 +548,13 @@ export default {
     });
 
     // https://github.com/SaturnMusic/PC/issues/26
-    window.addEventListener("unhandledrejection", (event) => { console.log("Unhandled promise rejection!\n", event.promise, event.reason); if(!this.$rooms.room){this.$root.skipNext()}});
+    window.addEventListener("unhandledrejection", (event) => { 
+      console.log("Unhandled promise rejection!\n", event.promise, event.reason); 
+      if (!this.$rooms.room && !event.reason.startsWith("The play() request")) 
+        { 
+          this.$root.skipNext() 
+        }
+    });
 
     //Check for update
     this.checkUpdate();
