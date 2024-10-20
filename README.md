@@ -61,7 +61,7 @@ npm run dist
 
 # Links
 - website: https://saturn.kim
-- discord: https://saturn.kim/discord
+- discord: https://discord.com/invite/fttYFSHPCQ
 - telegram: https://t.me/SaturnReleases
 
 # Download from Releases

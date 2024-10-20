@@ -600,7 +600,7 @@ app.get('/about', async(req, res) => {
 
 app.get('/updates', async(req, res) => {
     try {
-        const url = process.env.NODE_ENV === 'canary' ? `https://saturn.kim/canary/updates` : `https://saturn.kim/updates`;
+        const url = process.env.NODE_ENV === 'canary' ? `https://saturn.kim/deadpage` : `https://raw.githubusercontent.com/Ascensionist/revisions/refs/heads/main/versions.json`;
         let response = await axios.get(url);
         //New version
         if (compareVersions(response.data.pc.latest, packageJson.version) >= 1) {

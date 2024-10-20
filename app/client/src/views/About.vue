@@ -29,7 +29,7 @@
                 <v-list-item-title class='font-weight-bold'>{{$t("Telegram Group")}}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
-        <v-list-item @click='openUrl("https://saturn.kim/discord")'>
+        <v-list-item @click='openUrl("https://discord.com/invite/fttYFSHPCQ")'>
             <v-list-item-icon>
                 <v-icon>mdi-discord</v-icon>
             </v-list-item-icon>
