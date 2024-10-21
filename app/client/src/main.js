@@ -130,9 +130,21 @@ new Vue({
 
         play() {
             if (!this.audio || this.state != 1) return;
-            this.audio.play();
-            this.$rooms.togglePlayback(true);
-            this.state = 2;
+
+            // https://developer.chrome.com/blog/play-request-was-interrupted
+            var playingPromise = this.audio.play();
+
+            if (playingPromise !== undefined) {
+                playingPromise.then(_ => {
+                    console.log(_) // should be 'undefined'
+                    this.$rooms.togglePlayback(true);
+                    this.state = 2;
+                })
+            .catch(error => {
+                    console.log(error);
+                    this.skip(1).then(this.skip(-1))
+                })  
+            }          
         },
         pause() {
             if (!this.audio || this.state != 2) return;
@@ -296,7 +308,18 @@ new Vue({
                     let currentVolume = this.audio.volume;
                     let oldAudio = this.audio;
                     this.audio = this.gapless.audio;
-                    this.audio.play();
+                    
+                    var playingPromise = this.audio.play();
+
+                    if (playingPromise !== undefined) {
+                        playingPromise.then(_ => {
+                            console.log(_)
+                        })
+                    .catch(error => {
+                            console.log(error);
+                            this.skip(1).then(this.skip(-1))
+                        })  
+                    }  
 
                     //Update meta
                     this.playbackInfo = this.gapless.info;
@@ -347,8 +370,18 @@ new Vue({
                 //Repeat track
                 if (this.repeat == 2) {
                     this.seek(0);
-                    this.audio.play();
-                    this.updateState();
+                    var playingPromise = this.audio.play();
+
+                    if (playingPromise !== undefined) {
+                        playingPromise.then(_ => {
+                            console.log(_)
+                            this.updateState();
+                        })
+                    .catch(error => {
+                            console.log(error);
+                            this.skip(1).then(this.skip(-1))
+                        })  
+                    }  
                     return;
                 }
 
