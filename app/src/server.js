@@ -600,11 +600,11 @@ app.get('/about', async(req, res) => {
 
 app.get('/updates', async(req, res) => {
     try {
-        const url = `https://raw.githubusercontent.com/Ascensionist/revisions/refs/heads/main/versions.json`;
+        const url = `https://raw.githubusercontent.com/SaturnMusic/PC/refs/heads/main/package.json`;
         let response = await axios.get(url);
         //New version
-        if (compareVersions(response.data.pc.latest, packageJson.version) >= 1) {
-            res.send(response.data.pc.versions[0]);
+        if (compareVersions(response.data.version, packageJson.version) >= 1) {
+            res.send(response.data);
             return;
         }
         if (process.env.NODE_ENV === 'canary') {
