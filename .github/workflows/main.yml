@@ -1,12 +1,22 @@
 name: Node.js CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'package.json'
+      - 'app/package.json'
+      - 'app/client/package.json'
+      - 'README.md'
 
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build:
+
+  windows:
+    name: Build for Windows
 
     runs-on: windows-latest
 
@@ -16,6 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.5.1'
+      - run: npm version patch --git-tag-version false && cd app && npm version patch --git-tag-version false && cd client && npm version patch --git-tag-version false && cd ..\..
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Automated Version Bump  
+          push_options: '--force'
+          skip_dirty_check: true    
       - run: npm install -g electron-builder
       - run: npm install
       - run: npm run build
@@ -23,3 +39,68 @@ jobs:
         with:
           name: Windows Executables
           path: dist/*.exe
+
+  linux:
+    name: Build for Linux
+    needs: windows
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.5.1'    
+      - run: npm install -g electron-builder
+      - run: npm install
+      - run: npm run lbuild
+      - uses: actions/upload-artifact@v4.4.3
+        with:
+          name: Linux Executables
+          path: |
+            dist/*.AppImage
+            dist/*.tar.xz
+            dist/*.amd64.deb
+
+  osx:
+    name: Build for MacOS
+    needs: windows
+
+    runs-on: macos-13
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.5.1'    
+      - run: export OPENSSL_DIR=/usr/local/opt/openssl@3
+      - run: npm install -g electron-builder
+      - run: npm install
+      - run: npm run lbuild
+      - uses: actions/upload-artifact@v4.4.3
+        with:
+          name: MacOS Executables
+          path: dist/*.dmg
+            
+  notify:
+    name: Notify
+    needs: [osx, linux]
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} added a new commit!
+            ${{ github.event.commits[0].message }}
+            
+            Download: https://nightly.link/SaturnMusic/PC/workflows/main/main?preview
+            Changelog: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+
+            Please star the repository <3
