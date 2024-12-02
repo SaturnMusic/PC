@@ -34,7 +34,7 @@ Vue.prototype.$duration = (ms) => {
 Vue.prototype.$abbreviation = (n) => {
     if (!n || n == 0) return '0';
     var base = Math.floor(Math.log(Math.abs(n)) / Math.log(1000));
-    var suffix = 'KMB' [base - 1];
+    var suffix = 'KMB'[base - 1];
     return suffix ? String(n / Math.pow(1000, base)).substring(0, 3) + suffix : '' + n;
 }
 
@@ -140,11 +140,11 @@ new Vue({
                     this.$rooms.togglePlayback(true);
                     this.state = 2;
                 })
-            .catch(error => {
-                    console.log(error);
-                    this.skip(1).then(this.skip(-1))
-                })  
-            }          
+                    .catch(error => {
+                        console.log(error);
+                        this.skip(1).then(this.skip(-1))
+                    })
+            }
         },
         pause() {
             if (!this.audio || this.state != 2) return;
@@ -287,7 +287,7 @@ new Vue({
         //Configure html audio element
         configureAudio() {
             //Listen position updates
-            this.audio.addEventListener('timeupdate', async() => {
+            this.audio.addEventListener('timeupdate', async () => {
                 this.position = this.audio.currentTime * 1000;
 
                 //Rooms
@@ -308,18 +308,18 @@ new Vue({
                     let currentVolume = this.audio.volume;
                     let oldAudio = this.audio;
                     this.audio = this.gapless.audio;
-                    
+
                     var playingPromise = this.audio.play();
 
                     if (playingPromise !== undefined) {
                         playingPromise.then(_ => {
                             console.log(_)
                         })
-                    .catch(error => {
-                            console.log(error);
-                            this.skip(1).then(this.skip(-1))
-                        })  
-                    }  
+                            .catch(error => {
+                                console.log(error);
+                                this.skip(1).then(this.skip(-1))
+                            })
+                    }
 
                     //Update meta
                     this.playbackInfo = this.gapless.info;
@@ -355,7 +355,7 @@ new Vue({
             //Set volume
             this.audio.volume = this.volume * this.volume;
 
-            this.audio.addEventListener('ended', async() => {
+            this.audio.addEventListener('ended', async () => {
                 //Track end
                 if (this.$rooms.room) {
                     this.$rooms.trackEnd();
@@ -377,11 +377,11 @@ new Vue({
                             console.log(_)
                             this.updateState();
                         })
-                    .catch(error => {
-                            console.log(error);
-                            this.skip(1).then(this.skip(-1))
-                        })  
-                    }  
+                            .catch(error => {
+                                console.log(error);
+                                this.skip(1).then(this.skip(-1))
+                            })
+                    }
                     return;
                 }
 
@@ -501,7 +501,7 @@ new Vue({
             if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'dynamic_page_flow_config' && this.queue.source.type && this.queue.source.type == 'flow') {
                 if (this.lastid == this.track.id) return;
                 this.lastid = this.track.id;
-                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.type);
+                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.data);
                 if (data.data) {
                     this.replaceQueue(this.queue.data.concat(data.data));
                 }
@@ -659,16 +659,16 @@ new Vue({
             typeof window !== 'undefined' &&
             typeof window.process === 'object' &&
             window.process.type === 'renderer') || (
-            typeof navigator === 'object' && typeof navigator.userAgent === 'string' &&
-            navigator.userAgent.indexOf('Electron') >= 0
-        ));
+                typeof navigator === 'object' && typeof navigator.userAgent === 'string' &&
+                navigator.userAgent.indexOf('Electron') >= 0
+            ));
         if (this.settings.electron)
             ipcRenderer = window.require('electron').ipcRenderer;
 
         //Setup electron callbacks
         if (this.settings.electron) {
             //Save files on exit
-            ipcRenderer.on('onExit', async() => {
+            ipcRenderer.on('onExit', async () => {
                 this.pause();
                 await this.saveSettings();
                 await this.savePlaybackInfo();
@@ -710,7 +710,7 @@ new Vue({
             this.downloads.threads = data;
         });
         //Play at offset (for integrations)
-        this.$io.on('playOffset', async(data) => {
+        this.$io.on('playOffset', async (data) => {
             this.queue.data.splice(this.queue.index + 1, 0, data.track);
             await this.skip(1);
             this.seek(data.position);
@@ -790,5 +790,5 @@ new Vue({
     router,
     vuetify,
     i18n,
-    render: function(h) { return h(App) }
+    render: function (h) { return h(App) }
 }).$mount('#app');
