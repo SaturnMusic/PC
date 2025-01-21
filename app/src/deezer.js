@@ -365,12 +365,16 @@ class DeezerAPI {
                     //3 - MP3 320
                     //1 - MP3 128
 
-                    if (quality == 3) {
-                        qty = "MP3_320"
-                    } else if (quality == 1) {
-                        qty = "MP3_128"
-                    } else if (quality == 9) {
-                        qty = "FLAC"
+                    if (trackId.startsWith('-')) {
+                        qty = "MP3_MISC"
+                    } else {
+                        if (quality == 3) {
+                            qty = "MP3_320"
+                        } else if (quality == 1) {
+                            qty = "MP3_128"
+                        } else if (quality == 9) {
+                            qty = "FLAC"
+                        }
                     }
 
                     let json = {
@@ -427,10 +431,10 @@ class DeezerAPI {
         let qualityInfo = Track.getUrlInfo(info);
 
         //User uploaded MP3s
-        if (qualityInfo.trackId.startsWith('-')) {
-            qualityInfo.quality = 3;
-            return qualityInfo;
-        }
+        // if (qualityInfo.trackId.startsWith('-')) {
+        //     qualityInfo.quality = 3;
+        //     return qualityInfo;
+        // }
 
         //Quality fallback
         let newQuality = await this.qualityFallback(qualityInfo, quality);
