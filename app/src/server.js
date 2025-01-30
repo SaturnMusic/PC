@@ -436,8 +436,14 @@ app.get('/trackmix/:id', async(req, res) => {
 });
 
 // Load lyrics by song ID
-app.get('/lyrics/:id', async(req, res) => {
+app.get('/lyrics/:id/:p', async(req, res) => {
+    var provider;
+    if (req.params.p == "Deezer") provider = "Deezer"
+    if (req.params.p == "LRCLib") provider = "lrclib"
+    if (req.params.p == "MusixMatch") provider = "mxm"
+    if (req.params.p == "Genius") provider = "genius"
     try {
+        if (provider == "Deezer") {
         // Create the GraphQL query string
         const queryStringGraphQL = `
             query SynchronizedTrackLyrics($trackId: String!) {
@@ -486,7 +492,20 @@ app.get('/lyrics/:id', async(req, res) => {
 
         // No lyrics found in either API
         res.status(502).send('Lyrics not found!');
+
+    } else { // provider is not deezer
+
+        try {
+            var trackData = await deezer.callApi('song.getData', { sng_id: req.params.id });
+            var a = await deezer.s();
+            var b = await deezer.l(provider, `${trackData.results.SNG_TITLE} ${trackData.results.ART_NAME}`, 1, a)
+            var c = await deezer.con(b)
+            return res.json(c);
+        } catch (error) {logger.error(error); console.error(error);}
+
+    }
     } catch (error) {
+        logger.error(error);
         console.error(error);
         res.status(500).send('Internal Server Error');
     }

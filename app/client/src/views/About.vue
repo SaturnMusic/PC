@@ -55,10 +55,10 @@
                 <v-list-item-subtitle>Developer</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
-        <v-list-item>
+        <v-list-item @click='bw86Dialog = true'>
             <v-list-item-content>
                 <v-list-item-title class='font-weight-bold'>bw86</v-list-item-title>
-                <v-list-item-subtitle>Logo Designer, Former Developer</v-list-item-subtitle>
+                <v-list-item-subtitle>Logo Designer, Developer</v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
         <v-list-item>
@@ -79,7 +79,7 @@
                 Visit my site!
             </v-card-title>
             <v-card-text>
-                www.semen.makeup
+                github.com/bw8686
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -96,7 +96,7 @@
                 hiya!! please star the repo
             </v-card-title>
             <v-card-text>
-                github.com/Ascensionist
+                github.com/Sheathed
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>

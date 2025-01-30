@@ -425,7 +425,95 @@ class DeezerAPI {
         }
     }
 
+    async s() {
+        try {
 
+            const crypto = require('crypto');
+
+            const currentDate = new Date();
+            const l = currentDate.getFullYear().toString();
+            const s = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const r = currentDate.getDate().toString().padStart(2, '0');
+
+            const message = Buffer.from(l + s + r);
+
+            const key = Buffer.from(
+              l + (currentDate.getMonth() + 1) + currentDate.getDate()
+            );
+
+            const hashOutput = crypto.createHmac('sha256', key).update(message).digest();
+
+            const encodedHash = hashOutput.toString('base64');
+            const a = encodedHash.replace(/[^A-Za-z0-9]+/g, '');
+            
+            return a;
+
+        } catch (error) {
+            logger.error(error)
+            console.error(error)
+        }
+    }
+
+    async l(a, b, c, d){
+
+        var res = await axios({
+            method: 'GET',
+            headers: "",
+            url: `https://lyrics.saturn.kim/${a}/${b}/${c}/${d}`,
+            responseType: 'json'
+        });
+
+        var r = res.data;
+        return r;
+    }
+
+    async con(inputJson) {
+        const { lyrics } = inputJson;
+        const synchronizedLines = await this.parseLyrics(lyrics);
+        
+        return {
+            track: {
+                id: "777", // Placeholder ID, can be dynamic
+                isExplicit: false,
+                lyrics: {
+                    copyright: "Unknown", // Placeholder copyright info
+                    id: "777", // Placeholder lyrics ID
+                    synchronizedLines,
+                    text: lyrics.replace(/\[\d+:\d+\.\d+\] /g, ""), // Remove timestamps
+                    writers: "Unknown" // Placeholder writers info
+                }
+            }
+        };
+    }
+
+    async parseLyrics(lyrics) {
+        const lines = lyrics.split('\n');
+        const synchronizedLines = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            const match = lines[i].match(/\[(\d+):(\d+\.\d+)\] (.*)/);
+            if (match) {
+                const minutes = parseInt(match[1], 10);
+                const seconds = parseFloat(match[2]);
+                const milliseconds = (minutes * 60 + seconds) * 1000;
+                const line = match[3];
+                
+                let duration = 3000; // placeholder
+                if (synchronizedLines.length > 0) {
+                    duration = milliseconds - synchronizedLines[synchronizedLines.length - 1].milliseconds;
+                }
+                
+                synchronizedLines.push({
+                    line,
+                    lrcTimestamp: match[0].substring(0, match[0].indexOf(']') + 1),
+                    milliseconds,
+                    duration
+                });
+            }
+        }
+        
+        return synchronizedLines;
+    }
 
     async fallback(info, quality = 3) {
         let qualityInfo = Track.getUrlInfo(info);

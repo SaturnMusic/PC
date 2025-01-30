@@ -55,6 +55,7 @@ class Settings {
 
         this.logListen = false;
         this.lastFM = null;
+        this.lrcprovider = "Deezer";
         this.enableDiscord = false;
         this.discordJoin = false;
 

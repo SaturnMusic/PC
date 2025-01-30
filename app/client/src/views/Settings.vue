@@ -299,6 +299,21 @@
             v-model='$root.settings.lastfmsecret'
         ></v-text-field>
         <!-- Discord -->
+
+        <!-- <v-list-item>
+            <v-list-item-action>
+                <v-select
+                class='mr-4'
+                v-model='$root.settings.lrcprovider'
+                label="Provider"
+                :items="['Deezer', 'lrclib', 'genius', 'mxm']"
+                ></v-select>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Custom Lyric Provider")}}</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item> -->
+
         <v-list-item>
             <v-list-item-action>
                 <v-checkbox class='pl-2' v-model='$root.settings.enableDiscord' @click='snackbarText = $t("Requires restart to apply!"); snackbar = true'></v-checkbox>

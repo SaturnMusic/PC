@@ -501,7 +501,7 @@ new Vue({
             if (this.queue.data.length - 1 == this.queue.index && this.queue.source.source == 'dynamic_page_flow_config' && this.queue.source.type && this.queue.source.type == 'flow') {
                 if (this.lastid == this.track.id) return;
                 this.lastid = this.track.id;
-                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.type);
+                let data = await this.$axios.get('/smarttracklist/flow/' + this.queue.source.data);
                 if (data.data) {
                     this.replaceQueue(this.queue.data.concat(data.data));
                 }

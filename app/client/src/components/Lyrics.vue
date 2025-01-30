@@ -1,9 +1,25 @@
 <template>
     <div :style='"max-height: " + height' class='overflow-y-auto' ref='content'>
+
+        <v-list-item>
+            <v-list-item-action>
+                <v-select
+                class='mr-4'
+                v-model='p'
+                label="Provider"
+                :items="['Deezer', 'LRCLib', 'Genius', 'MusixMatch']"
+                @change="load"
+                ></v-select>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>{{$t("Custom Lyric Provider")}}</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+
         <div class='text-center my-4'>
             <v-progress-circular indeterminate v-if='loading'></v-progress-circular>
         </div>
-        
+
         <div v-if='!loading && lyrics && lyrics.lyrics && lyrics.lyrics.length > 0' class='text-center'>
             <div 
             v-for='(lyric, index) in lyrics.lyrics' 
@@ -37,7 +53,7 @@
                 {{$t("Error loading lyrics or lyrics not found!")}}
             </span>
         </div>
-    
+
     </div>
     </template>
     
@@ -53,6 +69,7 @@
                 cSongId: this.songId,
                 loading: true,
                 lyrics: null,
+                p: "Deezer",
                 currentLyricIndex: 0,
             }
         },
@@ -62,7 +79,7 @@
                 this.loading = true;
                 this.lyrics = null;
                 try {
-                    let res = await this.$axios.get(`/lyrics/${this.songId}`);
+                    let res = await this.$axios.get(`/lyrics/${this.songId}/${this.p}`);
     
                     // Check for new Pipe API response structure
                     if (res.data && res.data.track && res.data.track.lyrics) {
